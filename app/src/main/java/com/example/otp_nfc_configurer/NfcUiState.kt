@@ -1,0 +1,127 @@
+package com.example.otp_nfc_configurer
+
+import com.example.otp_nfc_configurer.data.AppTheme
+import com.example.otp_nfc_configurer.data.SavedConfig
+import com.example.otp_nfc_configurer.debug.DebugState
+import com.example.otp_nfc_configurer.debug.DebugTapMode
+import com.example.otp_nfc_configurer.model.DeviceInfo
+import com.example.otp_nfc_configurer.model.GlobalConfig
+import com.example.otp_nfc_configurer.model.GlobalField
+import com.example.otp_nfc_configurer.model.SlotConfig
+import com.example.otp_nfc_configurer.model.SlotField
+import com.example.otp_nfc_configurer.model.SlotSummary
+
+enum class NfcStatus { AVAILABLE, DISABLED, UNSUPPORTED }
+
+/** Operation executed on the next NFC tap. */
+sealed interface TapAction {
+    data object Discover : TapAction
+    data class LoadSlotNames(val page: Int) : TapAction
+    data class LoadSlot(val index: Int) : TapAction
+    data class ApplySlot(val index: Int) : TapAction
+    data class SetupSlot(val index: Int) : TapAction
+    data object ApplyGlobal : TapAction
+    /** Debug console: send the composed packet as-is. */
+    data object DebugSend : TapAction
+    /** Debug console: only read the current tag content. */
+    data object DebugRead : TapAction
+}
+
+sealed interface Screen {
+    data object Discover : Screen
+    data object Overview : Screen
+    data class SlotDetails(val index: Int) : Screen
+    data class SetupSlot(val index: Int) : Screen
+    /** "Tap to load / apply" prompt that waits for the NFC tap executing [action]. */
+    data class TapPrompt(val action: TapAction) : Screen
+    data class Failure(val title: String, val message: String, val retry: TapAction) : Screen
+    data class DeviceMismatch(val expectedSerial: String, val detectedSerial: String, val retry: TapAction) : Screen
+    data object Settings : Screen
+    data object SavedConfigs : Screen
+    data object Debug : Screen
+}
+
+enum class LoadState { NOT_LOADED, LOADING, LOADED, FAILED }
+
+data class DeviceSession(
+    val serial: String,
+    val info: DeviceInfo,
+    val global: GlobalConfig? = null,
+    val slots: Map<Int, SlotSummary> = emptyMap(),
+    val page: Int = 0,
+    val pageLoad: LoadState = LoadState.NOT_LOADED
+) {
+    val pageCount: Int get() = maxOf(1, (info.slotCount + PAGE_SIZE - 1) / PAGE_SIZE)
+    val pageRange: IntRange get() = pageRange(page)
+
+    fun pageRange(page: Int): IntRange =
+        (page * PAGE_SIZE) until minOf((page + 1) * PAGE_SIZE, info.slotCount)
+
+    fun isPageLoaded(page: Int): Boolean = pageRange(page).all { it in slots }
+
+    companion object {
+        const val PAGE_SIZE = 5
+    }
+}
+
+data class GlobalEditor(val original: GlobalConfig, val draft: GlobalConfig) {
+    val changedFields: List<GlobalField>
+        get() = GlobalField.entries.filter { it.raw(original) != it.raw(draft) }
+}
+
+data class SlotEditor(
+    val index: Int,
+    val original: SlotConfig,
+    val draft: SlotConfig,
+    val newSecret: ByteArray? = null,
+    val makeActive: Boolean = false
+) {
+    val changedFields: List<SlotField>
+        get() = SlotField.readable.filter { it.raw(original) != it.raw(draft) } +
+                listOfNotNull(SlotField.SECRET.takeIf { newSecret != null })
+
+    val changeCount: Int get() = changedFields.size + if (makeActive) 1 else 0
+}
+
+/** Raw form input of the "Setup Blank Slot" screen. */
+data class SetupDraft(
+    val index: Int,
+    val values: Map<SlotField, String>,
+    val errors: Map<SlotField, String> = emptyMap()
+)
+
+sealed interface EditTarget {
+    data class Slot(val field: SlotField) : EditTarget
+    data class Global(val field: GlobalField) : EditTarget
+}
+
+data class NfcUiState(
+    val nfcStatus: NfcStatus = NfcStatus.AVAILABLE,
+    val screen: Screen = Screen.Discover,
+    val appTheme: AppTheme = AppTheme.SYSTEM,
+    val isCommunicating: Boolean = false,
+    val session: DeviceSession? = null,
+    val globalEditor: GlobalEditor? = null,
+    val slotEditor: SlotEditor? = null,
+    val setupDraft: SetupDraft? = null,
+    val editing: EditTarget? = null,
+    val editError: String? = null,
+    val savedConfigs: List<SavedConfig> = emptyList(),
+    val debug: DebugState = DebugState(),
+    val message: String? = null
+) {
+    /** Operation the next NFC tap triggers on the current screen, or null if taps are ignored. */
+    val armedAction: TapAction?
+        get() = when (val s = screen) {
+            Screen.Discover -> TapAction.Discover
+            is Screen.TapPrompt -> s.action
+            Screen.Overview -> session?.takeIf { it.pageLoad != LoadState.LOADED }
+                ?.let { TapAction.LoadSlotNames(it.page) }
+            Screen.Debug -> when (debug.armed) {
+                DebugTapMode.SEND -> TapAction.DebugSend
+                DebugTapMode.READ -> TapAction.DebugRead
+                null -> null
+            }
+            else -> null
+        }
+}
