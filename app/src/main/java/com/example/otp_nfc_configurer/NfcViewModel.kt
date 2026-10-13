@@ -22,6 +22,7 @@
 package com.example.otp_nfc_configurer
 
 import android.nfc.Tag
+import android.nfc.TagLostException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
@@ -58,7 +59,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -69,6 +72,7 @@ class NfcViewModel(
     private val savedConfigRepository: SavedConfigRepository,
     private val themePreferences: ThemePreferences,
     private val openTransport: (Tag) -> NfcTransport = NdefTransport::open,
+    private val isTagPresent: (Tag) -> Boolean = NdefTransport::isPresent,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
@@ -77,6 +81,13 @@ class NfcViewModel(
 
     private val busy = AtomicBoolean(false)
 
+    /**
+     * Last discovered tag. Android dispatches a tag only once while it stays in the field, so a
+     * device that was not moved never triggers [onTagDiscovered] again; newly armed actions reuse it.
+     */
+    @Volatile
+    private var presentTag: Tag? = null
+
     init {
         savedConfigRepository.configs
             .onEach { configs -> _uiState.update { it.copy(savedConfigs = configs) } }
@@ -84,6 +95,12 @@ class NfcViewModel(
 
         themePreferences.theme
             .onEach { theme -> _uiState.update { it.copy(appTheme = theme) } }
+            .launchIn(viewModelScope)
+
+        // A newly armed action runs right away if the device is still lying on the phone.
+        _uiState.map { it.armedAction }
+            .distinctUntilChanged()
+            .onEach { action -> if (action != null) presentTag?.let(::reuseTag) }
             .launchIn(viewModelScope)
     }
 
@@ -102,8 +119,35 @@ class NfcViewModel(
         _uiState.update { it.copy(nfcStatus = status) }
     }
 
+    /** Reader mode was disabled: tag handles are invalid from now on. */
+    fun onReaderModeDisabled() {
+        presentTag = null
+    }
+
     /** Called from the NFC reader thread. */
     fun onTagDiscovered(tag: Tag) {
+        presentTag = tag
+        runArmedAction(tag)
+    }
+
+    /** Runs the armed action on a tag discovered earlier, if it is still in the field. */
+    private fun reuseTag(tag: Tag) {
+        if (busy.get()) return
+        viewModelScope.launch {
+            val present = try {
+                withContext(ioDispatcher) { isTagPresent(tag) }
+            } catch (_: Exception) {
+                false
+            }
+            if (!present) {
+                if (presentTag === tag) presentTag = null
+                return@launch // Wait for a new tap
+            }
+            runArmedAction(tag)
+        }
+    }
+
+    private fun runArmedAction(tag: Tag) {
         val action = _uiState.value.armedAction ?: return
         if (!busy.compareAndSet(false, true)) return
 
@@ -120,6 +164,7 @@ class NfcViewModel(
                     }
                 }
             } catch (e: Exception) {
+                if (e is TagLostException && presentTag === tag) presentTag = null
                 onActionFailed(action, e)
             } finally {
                 _uiState.update { it.copy(isCommunicating = false) }

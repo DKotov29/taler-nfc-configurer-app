@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         nfcAdapter?.disableReaderMode(this)
+        viewModel.onReaderModeDisabled()
     }
 
     private fun openNfcSettings() {

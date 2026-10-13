@@ -116,7 +116,7 @@ class NdefTransport private constructor(tag: Tag) : NfcTransport {
     }
 
     override fun close() {
-        try { connected?.close() } catch (_: IOException) {}
+        connected?.let(::closeQuietly)
         connected = null
     }
 
@@ -150,6 +150,23 @@ class NdefTransport private constructor(tag: Tag) : NfcTransport {
         private const val BUSY_RETRIES = 10
 
         fun open(tag: Tag): NfcTransport = NdefTransport(tag)
+
+        /** True if [tag] is still in the field and can be connected again. */
+        fun isPresent(tag: Tag): Boolean {
+            val technology: TagTechnology = NfcV.get(tag) ?: Ndef.get(tag) ?: return false
+            return try {
+                technology.connect()
+                closeQuietly(technology)
+                true
+            } catch (_: Exception) {
+                false // Tag lost or handle out of date (SecurityException)
+            }
+        }
+
+        /** A tag that left the field throws SecurityException ("Tag ... is out of date") even on close. */
+        private fun closeQuietly(technology: TagTechnology) {
+            try { technology.close() } catch (_: Exception) {}
+        }
 
         private fun createRequestRecord(request: ByteArray): NdefRecord =
             NdefRecord.createMime(MIME_TYPE, request)
