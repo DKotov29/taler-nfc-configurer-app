@@ -98,7 +98,7 @@ fun OverviewScreen(
                 )
                 InfoRow(
                     label = stringResource(R.string.overview_active_slot),
-                    value = stringResource(R.string.slot_number, session.info.activeSlotIndex),
+                    value = stringResource(R.string.slot_number, session.info.activeSlotIndex + 1),
                     emphasized = true
                 )
                 if (draft != null) {
@@ -135,7 +135,7 @@ fun OverviewScreen(
                     description = stringResource(R.string.overview_load_failed_desc)
                 )
                 LoadState.NOT_LOADED -> TapToLoadCard(
-                    heading = stringResource(R.string.overview_slots_range, session.pageRange.first, session.pageRange.last),
+                    heading = stringResource(R.string.overview_slots_range, session.pageRange.first + 1, session.pageRange.last + 1),
                     description = stringResource(R.string.overview_tap_to_load)
                 )
             }
@@ -177,8 +177,8 @@ private fun SlotRow(index: Int, summary: SlotSummary?, isActive: Boolean, onClic
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = if (name != null) stringResource(R.string.slot_number_named, index, name)
-            else stringResource(R.string.slot_number, index),
+            text = if (name != null) stringResource(R.string.slot_number_named, index + 1, name)
+            else stringResource(R.string.slot_number, index + 1),
             fontSize = 14.sp,
             fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
             color = MaterialTheme.colorScheme.onSurface

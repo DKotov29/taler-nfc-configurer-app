@@ -274,7 +274,7 @@ class NfcViewModel(
         }
         val name = _uiState.value.slotEditor?.original?.slotName
         updateSession { it.copy(slots = it.slots + (index to SlotSummary.Configured(name?.ifEmpty { null }))) }
-        _uiState.update { it.copy(screen = Screen.SlotDetails(index), message = uiText(R.string.msg_slot_applied, index)) }
+        _uiState.update { it.copy(screen = Screen.SlotDetails(index), message = uiText(R.string.msg_slot_applied, index + 1)) }
     }
 
     private fun setupSlot(client: DeviceClient, index: Int) {
@@ -286,7 +286,7 @@ class NfcViewModel(
         client.write(ProtocolCodec.setSlot(index, Protocol.Param.ALL, ProtocolCodec.encodeFullSlot(config, secret)))
         updateSession { it.copy(slots = it.slots + (index to SlotSummary.Configured(config.slotName.ifEmpty { null }))) }
         _uiState.update {
-            it.copy(screen = Screen.Overview, setupDraft = null, message = uiText(R.string.msg_slot_configured, index))
+            it.copy(screen = Screen.Overview, setupDraft = null, message = uiText(R.string.msg_slot_configured, index + 1))
         }
     }
 
@@ -343,7 +343,7 @@ class NfcViewModel(
                 is TapAction.LoadSlot -> state.copy(
                     screen = Screen.Failure(
                         uiText(R.string.failure_load_slot_title),
-                        uiText(R.string.failure_load_slot_message, action.index, reason),
+                        uiText(R.string.failure_load_slot_message, action.index + 1, reason),
                         action
                     )
                 )

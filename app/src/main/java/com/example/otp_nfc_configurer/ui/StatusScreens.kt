@@ -95,7 +95,7 @@ fun TapPromptScreen(
     val (title, heading, description) = when (action) {
         is TapAction.LoadSlot -> Triple(
             stringResource(R.string.tap_load_title), stringResource(R.string.tap_load_heading),
-            stringResource(R.string.tap_load_desc, action.index)
+            stringResource(R.string.tap_load_desc, action.index + 1)
         )
         is TapAction.ApplySlot -> Triple(
             stringResource(R.string.tap_apply_title), stringResource(R.string.tap_apply_heading),
@@ -103,7 +103,7 @@ fun TapPromptScreen(
         )
         is TapAction.SetupSlot -> Triple(
             stringResource(R.string.tap_apply_title), stringResource(R.string.tap_apply_heading),
-            stringResource(R.string.tap_setup_desc, action.index)
+            stringResource(R.string.tap_setup_desc, action.index + 1)
         )
         TapAction.ApplyGlobal -> Triple(
             stringResource(R.string.tap_global_title), stringResource(R.string.tap_global_heading),

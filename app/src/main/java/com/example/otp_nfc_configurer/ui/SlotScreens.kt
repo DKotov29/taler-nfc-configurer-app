@@ -93,7 +93,7 @@ fun SlotDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                stringResource(R.string.slot_details_heading, editor.index),
+                stringResource(R.string.slot_details_heading, editor.index + 1),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -147,7 +147,7 @@ fun SetupSlotScreen(
     onLoadTemplate: () -> Unit
 ) {
     FullScreen {
-        AppTopBar(title = stringResource(R.string.setup_title, draft.index), onBack = onBack)
+        AppTopBar(title = stringResource(R.string.setup_title, draft.index + 1), onBack = onBack)
         Column(
             Modifier
                 .weight(1f)
