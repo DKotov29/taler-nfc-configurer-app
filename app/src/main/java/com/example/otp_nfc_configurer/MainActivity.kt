@@ -4,16 +4,19 @@ import android.content.Intent
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.provider.Settings
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.otp_nfc_configurer.ui.ConfiguratorApp
 import com.example.otp_nfc_configurer.ui.theme.OTPNFCConfigurerTheme
 
-/** Minimal host: owns the NFC reader mode lifecycle and forwards tag events to [NfcViewModel]. */
-class MainActivity : ComponentActivity() {
+/**
+ * Minimal host: owns the NFC reader mode lifecycle and forwards tag events to [NfcViewModel].
+ * AppCompatActivity applies the per-app language chosen in settings.
+ */
+class MainActivity : AppCompatActivity() {
     private val viewModel: NfcViewModel by viewModels { NfcViewModel.Factory }
     private var nfcAdapter: NfcAdapter? = null
 

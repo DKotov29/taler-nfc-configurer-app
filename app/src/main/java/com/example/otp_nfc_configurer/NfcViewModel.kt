@@ -23,6 +23,9 @@ import com.example.otp_nfc_configurer.model.GlobalField
 import com.example.otp_nfc_configurer.model.SlotConfig
 import com.example.otp_nfc_configurer.model.SlotField
 import com.example.otp_nfc_configurer.model.SlotSummary
+import com.example.otp_nfc_configurer.model.UiText
+import com.example.otp_nfc_configurer.model.errorText
+import com.example.otp_nfc_configurer.model.uiText
 import com.example.otp_nfc_configurer.nfc.DeviceClient
 import com.example.otp_nfc_configurer.nfc.NdefTransport
 import com.example.otp_nfc_configurer.nfc.NfcTransport
@@ -205,7 +208,7 @@ class NfcViewModel(
         }
         val name = _uiState.value.slotEditor?.original?.slotName
         updateSession { it.copy(slots = it.slots + (index to SlotSummary.Configured(name?.ifEmpty { null }))) }
-        _uiState.update { it.copy(screen = Screen.SlotDetails(index), message = "Changes applied to slot $index") }
+        _uiState.update { it.copy(screen = Screen.SlotDetails(index), message = uiText(R.string.msg_slot_applied, index)) }
     }
 
     private fun setupSlot(client: DeviceClient, index: Int) {
@@ -217,7 +220,7 @@ class NfcViewModel(
         client.write(ProtocolCodec.setSlot(index, Protocol.Param.ALL, ProtocolCodec.encodeFullSlot(config, secret)))
         updateSession { it.copy(slots = it.slots + (index to SlotSummary.Configured(config.slotName.ifEmpty { null }))) }
         _uiState.update {
-            it.copy(screen = Screen.Overview, setupDraft = null, message = "Slot $index configured")
+            it.copy(screen = Screen.Overview, setupDraft = null, message = uiText(R.string.msg_slot_configured, index))
         }
     }
 
@@ -241,7 +244,7 @@ class NfcViewModel(
                         info = committed?.let { session.info.copy(deviceId = it.deviceId) } ?: session.info
                     )
                 },
-                message = "Global configuration applied"
+                message = uiText(R.string.msg_global_applied)
             )
         }
     }
@@ -264,26 +267,38 @@ class NfcViewModel(
     }
 
     private fun onActionFailed(action: TapAction, error: Exception) {
-        val reason = error.message ?: error.javaClass.simpleName
+        val reason = errorText(error)
         _uiState.update { state ->
             when (action) {
-                TapAction.Discover -> state.copy(screen = Screen.Discover, message = "Couldn't read device: $reason")
+                TapAction.Discover -> state.copy(screen = Screen.Discover, message = uiText(R.string.msg_discover_failed, reason))
                 is TapAction.LoadSlotNames -> state.copy(
                     session = state.session?.copy(pageLoad = LoadState.FAILED)
                 )
                 is TapAction.LoadSlot -> state.copy(
-                    screen = Screen.Failure("Couldn't Load Slot", "Slot ${action.index} could not be read. $reason", action)
+                    screen = Screen.Failure(
+                        uiText(R.string.failure_load_slot_title),
+                        uiText(R.string.failure_load_slot_message, action.index, reason),
+                        action
+                    )
                 )
                 is TapAction.ApplySlot, is TapAction.SetupSlot -> state.copy(
-                    screen = Screen.Failure("Slot Write Failed", "Slot configuration could not be written. $reason", action)
+                    screen = Screen.Failure(
+                        uiText(R.string.failure_slot_write_title),
+                        uiText(R.string.failure_slot_write_message, reason),
+                        action
+                    )
                 )
                 TapAction.ApplyGlobal -> state.copy(
-                    screen = Screen.Failure("Write Failed", "Global configuration could not be applied. $reason", action)
+                    screen = Screen.Failure(
+                        uiText(R.string.failure_write_title),
+                        uiText(R.string.failure_global_write_message, reason),
+                        action
+                    )
                 )
                 // Debug errors are logged in debugExchange, this only covers opening the transport.
                 TapAction.DebugSend, TapAction.DebugRead -> state.copy(
                     debug = state.debug.copy(armed = null),
-                    message = "Debug: $reason"
+                    message = uiText(R.string.msg_debug_error, reason)
                 )
             }
         }
@@ -396,7 +411,7 @@ class NfcViewModel(
 
     fun onSaveEdit(input: String) {
         val state = _uiState.value
-        val error: String? = when (val target = state.editing) {
+        val error: UiText? = when (val target = state.editing) {
             is EditTarget.Slot -> editSlotField(target.field, input)
             is EditTarget.Global -> {
                 val editor = state.globalEditor ?: return
@@ -413,8 +428,8 @@ class NfcViewModel(
         _uiState.update { if (error == null) it.copy(editing = null, editError = null) else it.copy(editError = error) }
     }
 
-    private fun editSlotField(field: SlotField, input: String): String? {
-        val editor = _uiState.value.slotEditor ?: return "No slot loaded"
+    private fun editSlotField(field: SlotField, input: String): UiText? {
+        val editor = _uiState.value.slotEditor ?: return uiText(R.string.error_no_slot)
         if (field == SlotField.SECRET) {
             return when (val result = SlotField.parseSecret(input)) {
                 is FieldInput.Valid -> { updateSlotEditor { it.copy(newSecret = result.value) }; null }
@@ -444,7 +459,7 @@ class NfcViewModel(
 
     /** Validates the setup form; stores field errors and returns null if invalid. */
     private fun validateSetup(draft: SetupDraft): Pair<SlotConfig, ByteArray>? {
-        val errors = mutableMapOf<SlotField, String>()
+        val errors = mutableMapOf<SlotField, UiText>()
         var config = EMPTY_SLOT
         for (field in SlotField.readable) {
             when (val result = field.apply(config, draft.values[field].orEmpty())) {
@@ -492,7 +507,7 @@ class NfcViewModel(
             else -> null
         } ?: return
         savedConfigRepository.save(config)
-        _uiState.update { it.copy(message = "Saved \"$name\"") }
+        _uiState.update { it.copy(message = uiText(R.string.msg_template_saved, name)) }
     }
 
     fun onLoadTemplate(config: SavedConfig) {
@@ -514,7 +529,7 @@ class NfcViewModel(
                     editor.copy(draft = draft)
                 })
                 else -> state
-            }.copy(message = "Loaded \"${config.name}\"")
+            }.copy(message = uiText(R.string.msg_template_loaded, config.name))
         }
     }
 

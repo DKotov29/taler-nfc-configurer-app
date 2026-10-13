@@ -15,12 +15,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.otp_nfc_configurer.EditTarget
 import com.example.otp_nfc_configurer.NfcUiState
 import com.example.otp_nfc_configurer.NfcViewModel
 import com.example.otp_nfc_configurer.Screen
 import com.example.otp_nfc_configurer.TapAction
+import com.example.otp_nfc_configurer.data.LanguagePreferences
 import com.example.otp_nfc_configurer.data.SavedConfigKind
 import com.example.otp_nfc_configurer.model.SlotField
 
@@ -29,9 +31,10 @@ fun ConfiguratorApp(viewModel: NfcViewModel, onEnableNfc: () -> Unit) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
     LaunchedEffect(state.message) {
         state.message?.let {
-            snackbarHostState.showSnackbar(it)
+            snackbarHostState.showSnackbar(it.resolve(context))
             viewModel.onMessageShown()
         }
     }
@@ -127,6 +130,8 @@ private fun ScreenContent(state: NfcUiState, viewModel: NfcViewModel, onEnableNf
         Screen.Settings -> SettingsScreen(
             currentTheme = state.appTheme,
             onThemeSelect = viewModel::onThemeSelected,
+            currentLanguage = LanguagePreferences.current(),
+            onLanguageSelect = LanguagePreferences::set,
             onBack = viewModel::onBack,
             onSavedConfigs = viewModel::onOpenSavedConfigs,
             onDebug = viewModel::onOpenDebug

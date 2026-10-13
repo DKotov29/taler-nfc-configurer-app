@@ -52,7 +52,7 @@ interface NfcTransport : Closeable {
 class NdefTransport private constructor(tag: Tag) : NfcTransport {
 
     override val serial: ByteArray = tag.id
-    private val ndef: Ndef = Ndef.get(tag) ?: throw IOException("Tag does not support NDEF")
+    private val ndef: Ndef = Ndef.get(tag) ?: throw UnsupportedTagException()
     private val nfcV: NfcV? = NfcV.get(tag)
     private var connected: TagTechnology? = null
 
@@ -78,7 +78,7 @@ class NdefTransport private constructor(tag: Tag) : NfcTransport {
                 return payload
             }
         }
-        throw IOException("Device did not respond within $RESPONSE_TIMEOUT_MS ms")
+        throw ResponseTimeoutException(RESPONSE_TIMEOUT_MS)
     }
 
     override fun readCurrentRecord(): NfcRecord? {
@@ -149,6 +149,12 @@ class NdefTransport private constructor(tag: Tag) : NfcTransport {
  * response). Transient: the command can be repeated.
  */
 class TagBusyException(message: String) : IOException(message)
+
+/** The device did not answer a request in time. */
+class ResponseTimeoutException(timeoutMs: Long) : IOException("Device did not respond within $timeoutMs ms")
+
+/** The tapped tag cannot carry protocol packets (no NDEF support). */
+class UnsupportedTagException : IOException("Tag does not support NDEF")
 
 /** Reads the NDEF message of an NFC Forum Type 5 tag directly from its memory blocks. */
 private class Type5Memory(private val nfcV: NfcV) {

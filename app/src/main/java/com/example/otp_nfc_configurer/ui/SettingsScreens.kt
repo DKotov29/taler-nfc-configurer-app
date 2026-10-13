@@ -31,8 +31,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.otp_nfc_configurer.R
+import com.example.otp_nfc_configurer.data.AppLanguage
 import com.example.otp_nfc_configurer.data.AppTheme
 import com.example.otp_nfc_configurer.data.SavedConfig
 import com.example.otp_nfc_configurer.data.SavedConfigKind
@@ -47,56 +50,101 @@ import com.example.otp_nfc_configurer.ui.theme.TextSecondary
 fun SettingsScreen(
     currentTheme: AppTheme,
     onThemeSelect: (AppTheme) -> Unit,
+    currentLanguage: AppLanguage,
+    onLanguageSelect: (AppLanguage) -> Unit,
     onBack: () -> Unit,
     onSavedConfigs: () -> Unit,
     onDebug: () -> Unit
 ) {
     var showThemeDialog by rememberSaveable { mutableStateOf(false) }
+    var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
     FullScreen {
-        AppTopBar(title = "Settings", onBack = onBack)
-        SettingsEntry("Saved Configurations", onSavedConfigs)
-        SettingsEntry("Debug Console", onDebug)
+        AppTopBar(title = stringResource(R.string.settings_title), onBack = onBack)
+        SettingsEntry(stringResource(R.string.settings_saved_configs), onSavedConfigs)
+        SettingsEntry(stringResource(R.string.settings_debug), onDebug)
         SettingsEntry(
-            title = "Theme (${currentTheme.title})",
+            title = stringResource(R.string.settings_theme, stringResource(currentTheme.title)),
             onClick = { showThemeDialog = true }
+        )
+        SettingsEntry(
+            title = stringResource(R.string.settings_language, languageName(currentLanguage)),
+            onClick = { showLanguageDialog = true }
         )
     }
     if (showThemeDialog) {
-        AlertDialog(
-            onDismissRequest = { showThemeDialog = false },
-            title = { Text("Choose Theme") },
-            text = {
-                Column {
-                    AppTheme.entries.forEach { theme ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onThemeSelect(theme)
-                                    showThemeDialog = false
-                                }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = theme == currentTheme,
-                                onClick = {
-                                    onThemeSelect(theme)
-                                    showThemeDialog = false
-                                }
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(theme.title, color = MaterialTheme.colorScheme.onSurface)
+        ChoiceDialog(
+            title = stringResource(R.string.settings_theme_dialog),
+            options = AppTheme.entries,
+            selected = currentTheme,
+            optionLabel = { stringResource(it.title) },
+            onSelect = onThemeSelect,
+            onDismiss = { showThemeDialog = false }
+        )
+    }
+    if (showLanguageDialog) {
+        ChoiceDialog(
+            title = stringResource(R.string.settings_language_dialog),
+            options = AppLanguage.entries,
+            selected = currentLanguage,
+            optionLabel = ::languageName,
+            // Translated name as a hint, unless it is the same as the native one.
+            optionSubtitle = { language ->
+                stringResource(language.label).takeIf { language.nativeName != null && it != language.nativeName }
+            },
+            onSelect = onLanguageSelect,
+            onDismiss = { showLanguageDialog = false }
+        )
+    }
+}
+
+@Composable
+private fun languageName(language: AppLanguage): String = language.nativeName ?: stringResource(language.label)
+
+/** Single-choice dialog; selecting an option applies it and closes the dialog. */
+@Composable
+private fun <T> ChoiceDialog(
+    title: String,
+    options: List<T>,
+    selected: T,
+    optionLabel: @Composable (T) -> String,
+    onSelect: (T) -> Unit,
+    onDismiss: () -> Unit,
+    optionSubtitle: @Composable (T) -> String? = { null }
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column {
+                options.forEach { option ->
+                    val choose = {
+                        onDismiss()
+                        onSelect(option)
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(onClick = choose)
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = option == selected, onClick = choose)
+                        Spacer(Modifier.width(8.dp))
+                        Column {
+                            Text(optionLabel(option), color = MaterialTheme.colorScheme.onSurface)
+                            optionSubtitle(option)?.let {
+                                Text(it, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
                         }
                     }
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = { showThemeDialog = false }) { Text("Close") }
             }
-        )
-    }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) }
+        }
+    )
 }
 
 @Composable
@@ -120,10 +168,10 @@ private fun SettingsEntry(title: String, onClick: () -> Unit, modifier: Modifier
 fun SavedConfigsScreen(configs: List<SavedConfig>, onBack: () -> Unit, onDelete: (SavedConfig) -> Unit) {
     var pendingDelete by rememberSaveable { mutableStateOf<String?>(null) }
     FullScreen {
-        AppTopBar(title = "Saved Templates", onBack = onBack)
+        AppTopBar(title = stringResource(R.string.templates_title), onBack = onBack)
         if (configs.isEmpty()) {
             Text(
-                "No templates saved yet. Use \"Save Template\" on the device or slot screen.",
+                stringResource(R.string.templates_empty),
                 color = TextSecondary,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(16.dp)
@@ -134,10 +182,10 @@ fun SavedConfigsScreen(configs: List<SavedConfig>, onBack: () -> Unit, onDelete:
                 Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Text(config.name, fontSize = 15.sp, color = TextPrimary)
-                        Text(kindLabel(config.kind), fontSize = 12.sp, color = TextSecondary)
+                        Text(stringResource(kindLabel(config.kind)), fontSize = 12.sp, color = TextSecondary)
                     }
                     IconButton(onClick = { pendingDelete = "${config.kind}:${config.name}" }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete ${config.name}", tint = TextSecondary)
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.template_delete_description, config.name), tint = TextSecondary)
                     }
                 }
                 HorizontalDivider(color = Border)
@@ -148,12 +196,12 @@ fun SavedConfigsScreen(configs: List<SavedConfig>, onBack: () -> Unit, onDelete:
     if (toDelete != null) {
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("Delete template?") },
-            text = { Text("\"${toDelete.name}\" will be removed from this phone.") },
+            title = { Text(stringResource(R.string.template_delete_title)) },
+            text = { Text(stringResource(R.string.template_delete_message, toDelete.name)) },
             confirmButton = {
-                TextButton(onClick = { onDelete(toDelete); pendingDelete = null }) { Text("Delete", color = ErrorRed) }
+                TextButton(onClick = { onDelete(toDelete); pendingDelete = null }) { Text(stringResource(R.string.action_delete), color = ErrorRed) }
             },
-            dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text("Cancel") } }
+            dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text(stringResource(R.string.action_cancel)) } }
         )
     }
 }
@@ -163,14 +211,14 @@ fun SaveTemplateDialog(onDismiss: () -> Unit, onSave: (String) -> Unit) {
     var name by rememberSaveable { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Save Template") },
+        title = { Text(stringResource(R.string.template_save)) },
         text = {
-            OutlinedTextField(value = name, onValueChange = { name = it }, singleLine = true, label = { Text("Name") })
+            OutlinedTextField(value = name, onValueChange = { name = it }, singleLine = true, label = { Text(stringResource(R.string.template_name)) })
         },
         confirmButton = {
-            TextButton(onClick = { onSave(name.trim()) }, enabled = name.isNotBlank()) { Text("Save") }
+            TextButton(onClick = { onSave(name.trim()) }, enabled = name.isNotBlank()) { Text(stringResource(R.string.action_save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } }
     )
 }
 
@@ -178,10 +226,10 @@ fun SaveTemplateDialog(onDismiss: () -> Unit, onSave: (String) -> Unit) {
 fun LoadTemplateDialog(configs: List<SavedConfig>, onDismiss: () -> Unit, onLoad: (SavedConfig) -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Load Template") },
+        title = { Text(stringResource(R.string.template_load)) },
         text = {
             if (configs.isEmpty()) {
-                Text("No matching templates saved.", color = TextSecondary)
+                Text(stringResource(R.string.template_none_matching), color = TextSecondary)
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     configs.forEach { config ->
@@ -198,11 +246,11 @@ fun LoadTemplateDialog(configs: List<SavedConfig>, onDismiss: () -> Unit, onLoad
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } }
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) } }
     )
 }
 
 private fun kindLabel(kind: SavedConfigKind) = when (kind) {
-    SavedConfigKind.SLOT -> "Slot configuration"
-    SavedConfigKind.GLOBAL -> "Device configuration"
+    SavedConfigKind.SLOT -> R.string.template_kind_slot
+    SavedConfigKind.GLOBAL -> R.string.template_kind_global
 }

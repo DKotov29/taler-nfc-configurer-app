@@ -37,12 +37,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.otp_nfc_configurer.NfcStatus
+import com.example.otp_nfc_configurer.R
 import com.example.otp_nfc_configurer.debug.BuiltRequest
 import com.example.otp_nfc_configurer.debug.DebugCommandBuilder
 import com.example.otp_nfc_configurer.debug.DebugDraft
@@ -80,7 +82,7 @@ fun DebugScreen(
     val built = remember(draft) { DebugCommandBuilder.build(draft) }
 
     FullScreen {
-        AppTopBar(title = "Debug Console", onBack = onBack)
+        AppTopBar(title = stringResource(R.string.settings_debug), onBack = onBack)
         NfcStatusBanner(nfcStatus, onEnableNfc)
         Column(
             Modifier
@@ -89,11 +91,11 @@ fun DebugScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SectionCard(title = "Command") {
+            SectionCard(title = stringResource(R.string.debug_command)) {
                 CommandEditor(draft, onDraftChange, built)
             }
 
-            SectionCard(title = "Request preview") {
+            SectionCard(title = stringResource(R.string.debug_request_preview)) {
                 when (built) {
                     is BuiltRequest.Error -> Text(built.message, color = ErrorRed, fontSize = 13.sp)
                     is BuiltRequest.Packet -> PacketView(
@@ -107,25 +109,24 @@ fun DebugScreen(
                 Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     WaitingIndicator(isCommunicating)
                     Text(
-                        if (state.armed == DebugTapMode.SEND) "Tap the device to send the request"
-                        else "Tap the device to read its current NDEF record",
+                        stringResource(if (state.armed == DebugTapMode.SEND) R.string.debug_tap_send else R.string.debug_tap_read),
                         fontSize = 12.sp,
                         color = TextSecondary
                     )
-                    TextButton(onClick = onDisarm) { Text("Cancel", color = TextSecondary) }
+                    TextButton(onClick = onDisarm) { Text(stringResource(R.string.action_cancel), color = TextSecondary) }
                 }
             } else {
                 PrimaryButton(
-                    "Send on next tap",
+                    stringResource(R.string.debug_send),
                     onClick = { onArm(DebugTapMode.SEND) },
                     enabled = built is BuiltRequest.Packet
                 )
-                OutlineButton("Read tag only", { onArm(DebugTapMode.READ) }, Modifier.fillMaxWidth())
+                OutlineButton(stringResource(R.string.debug_read), { onArm(DebugTapMode.READ) }, Modifier.fillMaxWidth())
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                SectionLabel("Log (${state.log.size})", Modifier.weight(1f))
-                if (state.log.isNotEmpty()) TextButton(onClick = onClearLog) { Text("Clear") }
+                SectionLabel(stringResource(R.string.debug_log, state.log.size), Modifier.weight(1f))
+                if (state.log.isNotEmpty()) TextButton(onClick = onClearLog) { Text(stringResource(R.string.action_clear)) }
             }
             state.log.forEach { ExchangeCard(it) }
         }
@@ -135,19 +136,22 @@ fun DebugScreen(
 @Composable
 private fun CommandEditor(draft: DebugDraft, onChange: (DebugDraft) -> Unit, built: BuiltRequest) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SwitchRow("Edit raw packet (hex)", draft.rawPacket != null) { raw ->
+        SwitchRow(stringResource(R.string.debug_edit_raw), draft.rawPacket != null) { raw ->
             val prefill = (built as? BuiltRequest.Packet)?.bytes?.let(PacketInspector::hex).orEmpty()
             onChange(draft.copy(rawPacket = if (raw) prefill else null))
         }
         if (draft.rawPacket != null) {
-            MonoInput("Packet", draft.rawPacket, "Complete packet incl. checksum, e.g. 13 00 04 05 12") {
+            MonoInput(
+                stringResource(R.string.debug_packet), draft.rawPacket,
+                stringResource(R.string.debug_packet_hint, "13 00 04 05 12")
+            ) {
                 onChange(draft.copy(rawPacket = it))
             }
             return@Column
         }
 
         OptionDropdown(
-            label = "Operation",
+            label = stringResource(R.string.debug_operation),
             options = PacketInspector.opCodes.map { (op, name) -> op to "0b%s %s".format(Integer.toBinaryString(op).padStart(4, '0'), name) },
             selected = draft.opCode
         ) { op ->
@@ -157,17 +161,17 @@ private fun CommandEditor(draft: DebugDraft, onChange: (DebugDraft) -> Unit, bui
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (draft.hasSlot) {
-                SmallNumberInput(if (draft.hasEndSlot) "Start slot" else "Slot ID", draft.slot, Modifier.weight(1f)) {
+                SmallNumberInput(stringResource(if (draft.hasEndSlot) R.string.debug_start_slot else R.string.debug_slot_id), draft.slot, Modifier.weight(1f)) {
                     onChange(draft.copy(slot = it))
                 }
             }
             if (draft.hasEndSlot) {
-                SmallNumberInput("End slot", draft.endSlot, Modifier.weight(1f)) { onChange(draft.copy(endSlot = it)) }
+                SmallNumberInput(stringResource(R.string.debug_end_slot), draft.endSlot, Modifier.weight(1f)) { onChange(draft.copy(endSlot = it)) }
             }
         }
         if (draft.hasParam) {
             OptionDropdown(
-                label = "Parameter",
+                label = stringResource(R.string.debug_parameter),
                 options = draft.paramOptions.map { it.id to it.label },
                 selected = draft.param
             ) { onChange(draft.copy(param = it)) }
@@ -177,30 +181,33 @@ private fun CommandEditor(draft: DebugDraft, onChange: (DebugDraft) -> Unit, bui
                 FilterChip(
                     selected = draft.payloadMode == PayloadMode.TYPED,
                     onClick = { onChange(draft.copy(payloadMode = PayloadMode.TYPED)) },
-                    label = { Text("Typed value") }
+                    label = { Text(stringResource(R.string.debug_typed)) }
                 )
                 FilterChip(
                     selected = draft.payloadMode == PayloadMode.HEX,
                     onClick = { onChange(draft.copy(payloadMode = PayloadMode.HEX)) },
-                    label = { Text("Hex bytes") }
+                    label = { Text(stringResource(R.string.debug_hex)) }
                 )
             }
-            MonoInput("Payload", draft.payload, DebugCommandBuilder.payloadHint(draft)) {
+            MonoInput(stringResource(R.string.debug_payload), draft.payload, DebugCommandBuilder.payloadHint(draft)) {
                 onChange(draft.copy(payload = it))
             }
         }
 
         var advanced by rememberSaveable { mutableStateOf(false) }
         TextButton(onClick = { advanced = !advanced }) {
-            Text(if (advanced) "Hide advanced" else "Advanced: version, checksum")
+            Text(stringResource(if (advanced) R.string.debug_hide_advanced else R.string.debug_show_advanced))
         }
         if (advanced) {
-            SmallNumberInput("Protocol version (0–15)", draft.version, Modifier.fillMaxWidth()) {
+            SmallNumberInput(stringResource(R.string.debug_version), draft.version, Modifier.fillMaxWidth()) {
                 onChange(draft.copy(version = it))
             }
-            SwitchRow("Automatic XOR checksum", draft.autoChecksum) { onChange(draft.copy(autoChecksum = it)) }
+            SwitchRow(stringResource(R.string.debug_auto_checksum), draft.autoChecksum) { onChange(draft.copy(autoChecksum = it)) }
             if (!draft.autoChecksum) {
-                MonoInput("Checksum byte", draft.manualChecksum, "One hex byte, e.g. FF to provoke ERR_CHECKSUM") {
+                MonoInput(
+                    stringResource(R.string.debug_checksum_byte), draft.manualChecksum,
+                    stringResource(R.string.debug_checksum_hint)
+                ) {
                     onChange(draft.copy(manualChecksum = it))
                 }
             }
@@ -222,21 +229,21 @@ private fun ExchangeCard(exchange: DebugExchange) {
         )
         exchange.request?.let {
             Spacer(Modifier.height(8.dp))
-            SectionLabel("Request")
+            SectionLabel(stringResource(R.string.debug_request))
             PacketView(it, PacketInspector.requestFields(it))
         }
         exchange.response?.let {
             Spacer(Modifier.height(8.dp))
-            SectionLabel("Response")
+            SectionLabel(stringResource(R.string.debug_response))
             PacketView(it, PacketInspector.responseFields(exchange.request, it))
         }
         exchange.error?.let {
             Spacer(Modifier.height(8.dp))
-            Text("Error: $it", color = ErrorRed, fontSize = 13.sp)
+            Text(stringResource(R.string.debug_error, it), color = ErrorRed, fontSize = 13.sp)
         }
         exchange.tagRecord?.let { record ->
             Spacer(Modifier.height(8.dp))
-            SectionLabel("Tag content")
+            SectionLabel(stringResource(R.string.debug_tag_content))
             Text(
                 "${record.tnfName} · ${record.type} · ${record.payload.size} B",
                 fontSize = 12.sp,
@@ -283,7 +290,7 @@ private fun PacketView(bytes: ByteArray, fields: List<PacketField>) {
             }
         }
         TextButton(onClick = { showBinary = !showBinary }) {
-            Text(if (showBinary) "Hide binary" else "Show binary (${bytes.size} B)", fontSize = 12.sp)
+            Text(if (showBinary) stringResource(R.string.debug_hide_binary) else stringResource(R.string.debug_show_binary, bytes.size), fontSize = 12.sp)
         }
         if (showBinary) {
             SelectionContainer {

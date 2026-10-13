@@ -1,0 +1,218 @@
+<resources>
+    <!-- Common actions -->
+    <string name="action_back">Zurück</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_close">Schließen</string>
+    <string name="action_save">Speichern</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_retry">Wiederholen</string>
+    <string name="action_abort">Abbrechen</string>
+    <string name="action_try_again">Erneut versuchen</string>
+    <string name="action_enable">Aktivieren</string>
+    <string name="action_clear">Leeren</string>
+    <string name="edit_field">%1$s bearbeiten</string>
+    <string name="edit_secret_placeholder">z. B. %1$s</string>
+    <string name="template_save">Vorlage speichern</string>
+    <string name="template_load">Vorlage laden</string>
+    <string name="apply_changes_count">Änderungen übernehmen (%1$d)</string>
+    <string name="apply_no_changes">Keine Änderungen vorhanden</string>
+    <string name="reset_changes">Änderungen verwerfen</string>
+    <string name="waiting_communicating">Kommunikation läuft – Telefon ruhig halten…</string>
+    <string name="waiting_tap">Warte auf NFC-Kontakt…</string>
+
+    <!-- Discover and tap prompts -->
+    <string name="discover_title">Gerät suchen</string>
+    <string name="discover_heading">Telefon an das Gerät halten</string>
+    <string name="discover_desc">Stellen Sie sicher, dass sich das Händlergerät im Konfigurationsmodus befindet.</string>
+    <string name="tap_load_title">Slot laden</string>
+    <string name="tap_load_heading">Telefon zum Laden anhalten</string>
+    <string name="tap_load_desc">Halten Sie Ihr Telefon an das Gerät, um die Konfiguration von Slot %1$d abzurufen (GET_SLOT).</string>
+    <string name="tap_apply_title">Änderungen übernehmen</string>
+    <string name="tap_apply_heading">Schreiben durch Antippen bestätigen</string>
+    <plurals name="tap_apply_desc">
+        <item quantity="one">Halten Sie Ihr Telefon an das Gerät, um %d geänderten Wert zu übertragen und auszuführen (SET_SLOT / SET_GLOBAL).</item>
+        <item quantity="other">Halten Sie Ihr Telefon an das Gerät, um %d geänderte Werte zu übertragen und auszuführen (SET_SLOT / SET_GLOBAL).</item>
+    </plurals>
+    <string name="tap_setup_desc">Halten Sie Ihr Telefon an das Gerät, um die vollständige Konfiguration von Slot %1$d zu schreiben (SET_SLOT).</string>
+    <string name="tap_global_title">Global übernehmen</string>
+    <string name="tap_global_heading">Globale Änderungen übernehmen</string>
+    <plurals name="tap_global_desc">
+        <item quantity="one">Gerät antippen, um %d geänderten globalen Parameter zu übernehmen (SET_GLOBAL).</item>
+        <item quantity="other">Gerät antippen, um %d geänderte globale Parameter zu übernehmen (SET_GLOBAL).</item>
+    </plurals>
+    <string name="tap_generic_desc">Halten Sie Ihr Telefon an das Gerät.</string>
+
+    <!-- NFC status -->
+    <string name="nfc_disabled_title">NFC ist deaktiviert</string>
+    <string name="nfc_disabled_desc">Aktivieren Sie NFC, um mit dem Gerät zu kommunizieren.</string>
+    <string name="nfc_unsupported_title">NFC nicht unterstützt</string>
+    <string name="nfc_unsupported_desc">Dieses Telefon hat keine NFC-Hardware.</string>
+
+    <!-- Failures -->
+    <string name="failure_write_title">Schreiben fehlgeschlagen</string>
+    <string name="failure_load_slot_title">Slot konnte nicht geladen werden</string>
+    <string name="failure_load_slot_message">Slot %1$d konnte nicht gelesen werden. %2$s</string>
+    <string name="failure_slot_write_title">Slot-Schreiben fehlgeschlagen</string>
+    <string name="failure_slot_write_message">Die Slot-Konfiguration konnte nicht geschrieben werden. %1$s</string>
+    <string name="failure_global_write_message">Die globale Konfiguration konnte nicht übernommen werden. %1$s</string>
+    <string name="mismatch_heading">Gerät während des Schreibens gewechselt</string>
+    <string name="mismatch_desc">Die Seriennummer des NFC-Chips stimmt nicht mehr mit dem gescannten Gerät überein. Zum Schutz vor dem Schreiben auf ein falsches Gerät wurde der Vorgang abgebrochen und keine Daten wurden geändert.</string>
+    <string name="mismatch_expected">Erwartete Seriennummer</string>
+    <string name="mismatch_detected">Erkannte Seriennummer</string>
+
+    <!-- Overview -->
+    <string name="overview_title">Verfügbare Slots</string>
+    <string name="overview_device_info">Geräteinformationen</string>
+    <string name="overview_active_slot">Aktiver Slot</string>
+    <string name="overview_loading_names">Slot-Namen werden geladen…</string>
+    <string name="overview_load_failed_title">Slot-Namen konnten nicht geladen werden</string>
+    <string name="overview_load_failed_desc">Halten Sie Ihr Telefon erneut an das Gerät, um es nochmals zu versuchen.</string>
+    <string name="overview_slots_range">Slots %1$d–%2$d</string>
+    <string name="overview_tap_to_load">Halten Sie Ihr Telefon an das Gerät, um die Slot-Namen zu laden.</string>
+    <string name="slot_number">Slot %1$d</string>
+    <string name="slot_number_named">Slot %1$d · %2$s</string>
+    <string name="slot_active_badge">AKTIV</string>
+    <string name="slot_status_configured">Konfiguriert</string>
+    <string name="slot_status_empty">Leer</string>
+    <string name="page_previous">Vorherige Seite</string>
+    <string name="page_next">Nächste Seite</string>
+    <string name="pagination">Slots %1$d–%2$d von %3$d</string>
+
+    <!-- Slot details and setup -->
+    <string name="slot_details_title">Slot-Details</string>
+    <string name="slot_details_heading">Konfiguration von Slot %1$d</string>
+    <string name="slot_active_chip">Aktiver Slot</string>
+    <string name="slot_make_active">Als aktiven Slot festlegen</string>
+    <string name="slot_make_active_pending">• Wird als aktiver Slot festgelegt (rückgängig)</string>
+    <string name="slot_new_secret">Neues Secret gesetzt</string>
+    <string name="setup_title">Slot %1$d einrichten</string>
+    <string name="setup_scan_qr">QR-Code zum Ausfüllen scannen</string>
+    <string name="setup_coming_soon">Demnächst</string>
+    <string name="setup_apply">Zum Übernehmen antippen</string>
+    <string name="setup_apply_note">Der Schreibvorgang erfordert einen physischen NFC-Kontakt.</string>
+
+    <!-- Fields -->
+    <string name="field_slot_name">Slot-Name</string>
+    <string name="field_algorithm">Algorithmus</string>
+    <string name="field_digits">Codelänge</string>
+    <string name="field_interval">Intervall</string>
+    <string name="field_currency">Währung</string>
+    <string name="field_fraction">Bruchteil</string>
+    <string name="field_merchant_template">Händlervorlage</string>
+    <string name="field_secret">Geheimer Schlüssel</string>
+    <string name="field_device_id">Geräte-ID</string>
+    <string name="field_merchant_backend">Händler-Backend</string>
+    <string name="field_device_description">Gerätebeschreibung</string>
+    <string name="hint_max_bytes">Bis zu %1$d Bytes.</string>
+    <string name="hint_digits">Zulässiger Bereich: %1$d–%2$d Stellen</string>
+    <string name="hint_interval">Zulässiger Bereich: %1$d–%2$d Sekunden</string>
+    <string name="hint_currency">Bis zu %1$d Bytes, z. B. KUDOS.</string>
+    <string name="hint_fraction">Zehnerpotenz bis %1$d, z. B. 100 für Cent.</string>
+    <string name="hint_secret">Base32-kodiert, bis zu %1$d Bytes. Nur schreibbar.</string>
+    <plurals name="value_digits">
+        <item quantity="one">%d Stelle</item>
+        <item quantity="other">%d Stellen</item>
+    </plurals>
+    <plurals name="value_seconds">
+        <item quantity="one">%d Sekunde</item>
+        <item quantity="other">%d Sekunden</item>
+    </plurals>
+    <string name="value_secret_protected">•••••••• (Geschützt)</string>
+
+    <!-- Validation -->
+    <string name="error_unknown_algorithm">Unbekannter Algorithmus</string>
+    <string name="error_fraction">Muss eine Zehnerpotenz zwischen 1 und %1$d sein</string>
+    <string name="error_base32">Keine gültige Base32-Zeichenfolge</string>
+    <string name="error_secret_empty">Das Secret darf nicht leer sein</string>
+    <string name="error_secret_too_long">Das Secret überschreitet %1$d Bytes</string>
+    <string name="error_not_empty">Darf nicht leer sein</string>
+    <string name="error_invalid_chars">Enthält ungültige Zeichen</string>
+    <string name="error_max_bytes">Höchstens %1$d Bytes erlaubt</string>
+    <string name="error_range">Zulässiger Bereich: %1$d–%2$d</string>
+    <string name="error_no_slot">Kein Slot geladen</string>
+
+    <!-- Communication errors -->
+    <string name="error_timeout">Das Gerät hat nicht rechtzeitig geantwortet. Halten Sie das Telefon an das Gerät und versuchen Sie es erneut.</string>
+    <string name="error_tag_lost">Die Verbindung zum Gerät wurde unterbrochen. Halten Sie das Telefon während der Kommunikation ruhig.</string>
+    <string name="error_unsupported_tag">Dieser NFC-Tag ist kein unterstütztes Gerät.</string>
+    <string name="error_checksum">Die Antwort des Geräts war beschädigt (Prüfsumme falsch).</string>
+    <string name="error_malformed">Ungültige Antwort des Geräts: %1$s</string>
+    <string name="status_version_mismatch">Protokollversion stimmt nicht überein (Gerät unterstützt v%1$d, App verwendet v%2$d)</string>
+    <string name="status_invalid_length">Ungültige Nutzdatenlänge</string>
+    <string name="status_checksum">Das Gerät hat die Paketprüfsumme abgelehnt</string>
+    <string name="status_unsupported_cmd">Befehl wird vom Gerät nicht unterstützt</string>
+    <string name="status_invalid_slot">Slot existiert nicht</string>
+    <string name="status_invalid_param">Unbekannter Parameter</string>
+    <string name="status_invalid_value">Das Gerät hat den Wert abgelehnt</string>
+    <string name="status_unknown">Unbekannter Gerätestatus 0x%1$02X</string>
+
+    <!-- Messages -->
+    <string name="msg_slot_applied">Änderungen an Slot %1$d übernommen</string>
+    <string name="msg_slot_configured">Slot %1$d konfiguriert</string>
+    <string name="msg_global_applied">Globale Konfiguration übernommen</string>
+    <string name="msg_discover_failed">Gerät konnte nicht gelesen werden: %1$s</string>
+    <string name="msg_debug_error">Debug: %1$s</string>
+    <string name="msg_template_saved">„%1$s“ gespeichert</string>
+    <string name="msg_template_loaded">„%1$s“ geladen</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_saved_configs">Gespeicherte Konfigurationen</string>
+    <string name="settings_debug">Debug-Konsole</string>
+    <string name="settings_theme">Design (%1$s)</string>
+    <string name="settings_theme_dialog">Design auswählen</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="settings_language">Sprache (%1$s)</string>
+    <string name="settings_language_dialog">Sprache auswählen</string>
+    <string name="language_system">Systemstandard</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_swiss_german">Schweizerdeutsch (Bern)</string>
+    <string name="language_ukrainian">Ukrainisch</string>
+
+    <!-- Templates -->
+    <string name="templates_title">Gespeicherte Vorlagen</string>
+    <string name="templates_empty">Noch keine Vorlagen gespeichert. Verwenden Sie „Vorlage speichern“ auf dem Geräte- oder Slot-Bildschirm.</string>
+    <string name="template_delete_description">%1$s löschen</string>
+    <string name="template_delete_title">Vorlage löschen?</string>
+    <string name="template_delete_message">„%1$s“ wird von diesem Telefon entfernt.</string>
+    <string name="template_name">Name</string>
+    <string name="template_none_matching">Keine passenden Vorlagen gespeichert.</string>
+    <string name="template_kind_slot">Slot-Konfiguration</string>
+    <string name="template_kind_global">Gerätekonfiguration</string>
+
+    <!-- Debug console -->
+    <string name="debug_command">Befehl</string>
+    <string name="debug_request_preview">Anfragevorschau</string>
+    <string name="debug_tap_send">Gerät antippen, um die Anfrage zu senden</string>
+    <string name="debug_tap_read">Gerät antippen, um den aktuellen NDEF-Eintrag zu lesen</string>
+    <string name="debug_send">Beim nächsten Antippen senden</string>
+    <string name="debug_read">Nur Tag lesen</string>
+    <string name="debug_log">Protokoll (%1$d)</string>
+    <string name="debug_edit_raw">Rohpaket bearbeiten (Hex)</string>
+    <string name="debug_packet">Paket</string>
+    <string name="debug_packet_hint">Vollständiges Paket inkl. Prüfsumme, z. B. %1$s</string>
+    <string name="debug_operation">Operation</string>
+    <string name="debug_start_slot">Start-Slot</string>
+    <string name="debug_slot_id">Slot-ID</string>
+    <string name="debug_end_slot">End-Slot</string>
+    <string name="debug_parameter">Parameter</string>
+    <string name="debug_typed">Typisierter Wert</string>
+    <string name="debug_hex">Hex-Bytes</string>
+    <string name="debug_payload">Nutzdaten</string>
+    <string name="debug_hide_advanced">Erweitert ausblenden</string>
+    <string name="debug_show_advanced">Erweitert: Version, Prüfsumme</string>
+    <string name="debug_version">Protokollversion (0–15)</string>
+    <string name="debug_auto_checksum">Automatische XOR-Prüfsumme</string>
+    <string name="debug_checksum_byte">Prüfsummen-Byte</string>
+    <string name="debug_checksum_hint">Ein Hex-Byte, z. B. FF, um ERR_CHECKSUM auszulösen</string>
+    <string name="debug_request">Anfrage</string>
+    <string name="debug_response">Antwort</string>
+    <string name="debug_error">Fehler: %1$s</string>
+    <string name="debug_tag_content">Tag-Inhalt</string>
+    <string name="debug_hide_binary">Binär ausblenden</string>
+    <string name="debug_show_binary">Binär anzeigen (%1$d B)</string>
+</resources>

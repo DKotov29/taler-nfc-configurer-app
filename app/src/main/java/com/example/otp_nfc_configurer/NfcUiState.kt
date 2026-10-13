@@ -10,6 +10,7 @@ import com.example.otp_nfc_configurer.model.GlobalField
 import com.example.otp_nfc_configurer.model.SlotConfig
 import com.example.otp_nfc_configurer.model.SlotField
 import com.example.otp_nfc_configurer.model.SlotSummary
+import com.example.otp_nfc_configurer.model.UiText
 
 enum class NfcStatus { AVAILABLE, DISABLED, UNSUPPORTED }
 
@@ -34,7 +35,7 @@ sealed interface Screen {
     data class SetupSlot(val index: Int) : Screen
     /** "Tap to load / apply" prompt that waits for the NFC tap executing [action]. */
     data class TapPrompt(val action: TapAction) : Screen
-    data class Failure(val title: String, val message: String, val retry: TapAction) : Screen
+    data class Failure(val title: UiText, val message: UiText, val retry: TapAction) : Screen
     data class DeviceMismatch(val expectedSerial: String, val detectedSerial: String, val retry: TapAction) : Screen
     data object Settings : Screen
     data object SavedConfigs : Screen
@@ -87,7 +88,7 @@ data class SlotEditor(
 data class SetupDraft(
     val index: Int,
     val values: Map<SlotField, String>,
-    val errors: Map<SlotField, String> = emptyMap()
+    val errors: Map<SlotField, UiText> = emptyMap()
 )
 
 sealed interface EditTarget {
@@ -105,10 +106,10 @@ data class NfcUiState(
     val slotEditor: SlotEditor? = null,
     val setupDraft: SetupDraft? = null,
     val editing: EditTarget? = null,
-    val editError: String? = null,
+    val editError: UiText? = null,
     val savedConfigs: List<SavedConfig> = emptyList(),
     val debug: DebugState = DebugState(),
-    val message: String? = null
+    val message: UiText? = null
 ) {
     /** Operation the next NFC tap triggers on the current screen, or null if taps are ignored. */
     val armedAction: TapAction?

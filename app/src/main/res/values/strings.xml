@@ -1,3 +1,220 @@
 <resources>
-    <string name="app_name">OTP-NFC-Configurer</string>
+    <string name="app_name" translatable="false">OTP-NFC-Configurer</string>
+
+    <!-- Common actions -->
+    <string name="action_back">Back</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_close">Close</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_abort">Abort</string>
+    <string name="action_try_again">Try Again</string>
+    <string name="action_enable">Enable</string>
+    <string name="action_clear">Clear</string>
+    <string name="edit_field">Edit %1$s</string>
+    <string name="edit_secret_placeholder">e.g. %1$s</string>
+    <string name="template_save">Save Template</string>
+    <string name="template_load">Load Template</string>
+    <string name="apply_changes_count">Apply Changes (%1$d)</string>
+    <string name="apply_no_changes">No Changes to Apply</string>
+    <string name="reset_changes">Reset Changes</string>
+    <string name="waiting_communicating">Communicating — keep the phone still…</string>
+    <string name="waiting_tap">Waiting for NFC tap…</string>
+
+    <!-- Discover and tap prompts -->
+    <string name="discover_title">Discover Device</string>
+    <string name="discover_heading">Tap Phone to Device</string>
+    <string name="discover_desc">Ensure the merchant device is switched to configuration mode.</string>
+    <string name="tap_load_title">Load Slot</string>
+    <string name="tap_load_heading">Tap Phone to Load Slot</string>
+    <string name="tap_load_desc">Hold your phone near the device to fetch the configuration of slot %1$d (GET_SLOT).</string>
+    <string name="tap_apply_title">Apply Changes</string>
+    <string name="tap_apply_heading">Tap to Confirm Write</string>
+    <plurals name="tap_apply_desc">
+        <item quantity="one">Hold your phone near the device to transmit and execute %d changed value (SET_SLOT / SET_GLOBAL).</item>
+        <item quantity="other">Hold your phone near the device to transmit and execute %d changed values (SET_SLOT / SET_GLOBAL).</item>
+    </plurals>
+    <string name="tap_setup_desc">Hold your phone near the device to write the complete configuration of slot %1$d (SET_SLOT).</string>
+    <string name="tap_global_title">Global Apply</string>
+    <string name="tap_global_heading">Apply Global Changes</string>
+    <plurals name="tap_global_desc">
+        <item quantity="one">Tap device to apply %d changed global parameter (SET_GLOBAL).</item>
+        <item quantity="other">Tap device to apply %d changed global parameters (SET_GLOBAL).</item>
+    </plurals>
+    <string name="tap_generic_desc">Hold your phone near the device.</string>
+
+    <!-- NFC status -->
+    <string name="nfc_disabled_title">NFC is disabled</string>
+    <string name="nfc_disabled_desc">Enable NFC to communicate with the device.</string>
+    <string name="nfc_unsupported_title">NFC not supported</string>
+    <string name="nfc_unsupported_desc">This phone has no NFC hardware.</string>
+
+    <!-- Failures -->
+    <string name="failure_write_title">Write Failed</string>
+    <string name="failure_load_slot_title">Couldn\'t Load Slot</string>
+    <string name="failure_load_slot_message">Slot %1$d could not be read. %2$s</string>
+    <string name="failure_slot_write_title">Slot Write Failed</string>
+    <string name="failure_slot_write_message">Slot configuration could not be written. %1$s</string>
+    <string name="failure_global_write_message">Global configuration could not be applied. %1$s</string>
+    <string name="mismatch_heading">Device Changed Mid-Write</string>
+    <string name="mismatch_desc">The NFC chip serial number no longer matches the device you scanned. To protect against writing to the wrong device, the operation was cancelled and no data was changed.</string>
+    <string name="mismatch_expected">Expected Serial</string>
+    <string name="mismatch_detected">Detected Serial</string>
+
+    <!-- Overview -->
+    <string name="overview_title">Available Slots</string>
+    <string name="overview_device_info">Device Information</string>
+    <string name="overview_active_slot">Active Slot</string>
+    <string name="overview_loading_names">Loading slot names…</string>
+    <string name="overview_load_failed_title">Couldn\'t Load Slot Names</string>
+    <string name="overview_load_failed_desc">Tap your phone to the device again to retry.</string>
+    <string name="overview_slots_range">Slots %1$d–%2$d</string>
+    <string name="overview_tap_to_load">Tap your phone to the device to load the slot names.</string>
+    <string name="slot_number">Slot %1$d</string>
+    <string name="slot_number_named">Slot %1$d · %2$s</string>
+    <string name="slot_active_badge">ACTIVE</string>
+    <string name="slot_status_configured">Configured</string>
+    <string name="slot_status_empty">Empty</string>
+    <string name="page_previous">Previous page</string>
+    <string name="page_next">Next page</string>
+    <string name="pagination">Slots %1$d–%2$d of %3$d</string>
+
+    <!-- Slot details and setup -->
+    <string name="slot_details_title">Slot Details</string>
+    <string name="slot_details_heading">Slot %1$d Configuration</string>
+    <string name="slot_active_chip">Active slot</string>
+    <string name="slot_make_active">Set as Active Slot</string>
+    <string name="slot_make_active_pending">• Will be set as Active Slot (undo)</string>
+    <string name="slot_new_secret">New secret set</string>
+    <string name="setup_title">Setup Slot %1$d</string>
+    <string name="setup_scan_qr">Scan QR to Prefill</string>
+    <string name="setup_coming_soon">Coming soon</string>
+    <string name="setup_apply">Tap to Apply Changes</string>
+    <string name="setup_apply_note">Requires physical NFC touch to execute write operation.</string>
+
+    <!-- Fields -->
+    <string name="field_slot_name">Slot Name</string>
+    <string name="field_algorithm">Algorithm</string>
+    <string name="field_digits">Code Length</string>
+    <string name="field_interval">Interval</string>
+    <string name="field_currency">Currency</string>
+    <string name="field_fraction">Fraction</string>
+    <string name="field_merchant_template">Merchant Template</string>
+    <string name="field_secret">Secret Key</string>
+    <string name="field_device_id">Device ID</string>
+    <string name="field_merchant_backend">Merchant Backend</string>
+    <string name="field_device_description">Device Description</string>
+    <string name="hint_max_bytes">Up to %1$d bytes.</string>
+    <string name="hint_digits">Allowed range: %1$d–%2$d digits</string>
+    <string name="hint_interval">Allowed range: %1$d–%2$d seconds</string>
+    <string name="hint_currency">Up to %1$d bytes, e.g. KUDOS.</string>
+    <string name="hint_fraction">Power of ten up to %1$d, e.g. 100 for cents.</string>
+    <string name="hint_secret">Base32 encoded, up to %1$d bytes. Write-only.</string>
+    <plurals name="value_digits">
+        <item quantity="one">%d Digit</item>
+        <item quantity="other">%d Digits</item>
+    </plurals>
+    <plurals name="value_seconds">
+        <item quantity="one">%d Second</item>
+        <item quantity="other">%d Seconds</item>
+    </plurals>
+    <string name="value_secret_protected">•••••••• (Protected)</string>
+
+    <!-- Validation -->
+    <string name="error_unknown_algorithm">Unknown algorithm</string>
+    <string name="error_fraction">Must be a power of ten between 1 and %1$d</string>
+    <string name="error_base32">Not a valid Base32 string</string>
+    <string name="error_secret_empty">Secret must not be empty</string>
+    <string name="error_secret_too_long">Secret exceeds %1$d bytes</string>
+    <string name="error_not_empty">Must not be empty</string>
+    <string name="error_invalid_chars">Contains invalid characters</string>
+    <string name="error_max_bytes">At most %1$d bytes allowed</string>
+    <string name="error_range">Allowed range: %1$d–%2$d</string>
+    <string name="error_no_slot">No slot loaded</string>
+
+    <!-- Communication errors -->
+    <string name="error_timeout">The device did not respond in time. Keep the phone on the device and try again.</string>
+    <string name="error_tag_lost">Connection to the device was lost. Keep the phone still while it communicates.</string>
+    <string name="error_unsupported_tag">This NFC tag is not a supported device.</string>
+    <string name="error_checksum">The response of the device was corrupted (checksum mismatch).</string>
+    <string name="error_malformed">Invalid response from the device: %1$s</string>
+    <string name="status_version_mismatch">Protocol version mismatch (device supports v%1$d, app uses v%2$d)</string>
+    <string name="status_invalid_length">Invalid payload length</string>
+    <string name="status_checksum">Device rejected the packet checksum</string>
+    <string name="status_unsupported_cmd">Command not supported by the device</string>
+    <string name="status_invalid_slot">Slot does not exist</string>
+    <string name="status_invalid_param">Unknown parameter</string>
+    <string name="status_invalid_value">Device rejected the value</string>
+    <string name="status_unknown">Unknown device status 0x%1$02X</string>
+
+    <!-- Messages -->
+    <string name="msg_slot_applied">Changes applied to slot %1$d</string>
+    <string name="msg_slot_configured">Slot %1$d configured</string>
+    <string name="msg_global_applied">Global configuration applied</string>
+    <string name="msg_discover_failed">Couldn\'t read device: %1$s</string>
+    <string name="msg_debug_error">Debug: %1$s</string>
+    <string name="msg_template_saved">Saved \"%1$s\"</string>
+    <string name="msg_template_loaded">Loaded \"%1$s\"</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_saved_configs">Saved Configurations</string>
+    <string name="settings_debug">Debug Console</string>
+    <string name="settings_theme">Theme (%1$s)</string>
+    <string name="settings_theme_dialog">Choose Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_language">Language (%1$s)</string>
+    <string name="settings_language_dialog">Choose Language</string>
+    <string name="language_system">System default</string>
+    <string name="language_english">English</string>
+    <string name="language_german">German</string>
+    <string name="language_swiss_german">Swiss German (Bern)</string>
+    <string name="language_ukrainian">Ukrainian</string>
+
+    <!-- Templates -->
+    <string name="templates_title">Saved Templates</string>
+    <string name="templates_empty">No templates saved yet. Use \"Save Template\" on the device or slot screen.</string>
+    <string name="template_delete_description">Delete %1$s</string>
+    <string name="template_delete_title">Delete template?</string>
+    <string name="template_delete_message">\"%1$s\" will be removed from this phone.</string>
+    <string name="template_name">Name</string>
+    <string name="template_none_matching">No matching templates saved.</string>
+    <string name="template_kind_slot">Slot configuration</string>
+    <string name="template_kind_global">Device configuration</string>
+
+    <!-- Debug console (protocol details stay in English) -->
+    <string name="debug_command">Command</string>
+    <string name="debug_request_preview">Request preview</string>
+    <string name="debug_tap_send">Tap the device to send the request</string>
+    <string name="debug_tap_read">Tap the device to read its current NDEF record</string>
+    <string name="debug_send">Send on next tap</string>
+    <string name="debug_read">Read tag only</string>
+    <string name="debug_log">Log (%1$d)</string>
+    <string name="debug_edit_raw">Edit raw packet (hex)</string>
+    <string name="debug_packet">Packet</string>
+    <string name="debug_packet_hint">Complete packet incl. checksum, e.g. %1$s</string>
+    <string name="debug_operation">Operation</string>
+    <string name="debug_start_slot">Start slot</string>
+    <string name="debug_slot_id">Slot ID</string>
+    <string name="debug_end_slot">End slot</string>
+    <string name="debug_parameter">Parameter</string>
+    <string name="debug_typed">Typed value</string>
+    <string name="debug_hex">Hex bytes</string>
+    <string name="debug_payload">Payload</string>
+    <string name="debug_hide_advanced">Hide advanced</string>
+    <string name="debug_show_advanced">Advanced: version, checksum</string>
+    <string name="debug_version">Protocol version (0–15)</string>
+    <string name="debug_auto_checksum">Automatic XOR checksum</string>
+    <string name="debug_checksum_byte">Checksum byte</string>
+    <string name="debug_checksum_hint">One hex byte, e.g. FF to provoke ERR_CHECKSUM</string>
+    <string name="debug_request">Request</string>
+    <string name="debug_response">Response</string>
+    <string name="debug_error">Error: %1$s</string>
+    <string name="debug_tag_content">Tag content</string>
+    <string name="debug_hide_binary">Hide binary</string>
+    <string name="debug_show_binary">Show binary (%1$d B)</string>
 </resources>

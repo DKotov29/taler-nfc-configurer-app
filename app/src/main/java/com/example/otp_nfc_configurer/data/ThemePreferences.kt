@@ -1,14 +1,16 @@
 package com.example.otp_nfc_configurer.data
 
 import android.content.Context
+import androidx.annotation.StringRes
+import com.example.otp_nfc_configurer.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-enum class AppTheme(val title: String) {
-    SYSTEM("System"),
-    LIGHT("Light"),
-    DARK("Dark")
+enum class AppTheme(@StringRes val title: Int) {
+    SYSTEM(R.string.theme_system),
+    LIGHT(R.string.theme_light),
+    DARK(R.string.theme_dark)
 }
 
 class ThemePreferences(context: Context) {

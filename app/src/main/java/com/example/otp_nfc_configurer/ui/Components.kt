@@ -24,11 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.otp_nfc_configurer.R
+import com.example.otp_nfc_configurer.model.UiText
 
 @Composable
 fun AppTopBar(
@@ -46,7 +51,7 @@ fun AppTopBar(
         ) {
             if (onBack != null) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back), tint = MaterialTheme.colorScheme.onSurface)
                 }
             }
             Text(
@@ -60,7 +65,7 @@ fun AppTopBar(
             )
             if (onSettings != null) {
                 IconButton(onClick = onSettings) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -150,7 +155,7 @@ fun InfoRow(
             if (onEdit != null) {
                 Icon(
                     Icons.Default.Edit,
-                    contentDescription = "Edit $label",
+                    contentDescription = stringResource(R.string.edit_field, label),
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                     modifier = Modifier
                         .padding(start = 8.dp)
@@ -242,8 +247,8 @@ fun GrayButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier)
 @Composable
 fun TemplateButtons(onSave: () -> Unit, onLoad: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(vertical = 4.dp)) {
-        GrayButton("Save Template", onSave, Modifier.weight(1f))
-        GrayButton("Load Template", onLoad, Modifier.weight(1f))
+        GrayButton(stringResource(R.string.template_save), onSave, Modifier.weight(1f))
+        GrayButton(stringResource(R.string.template_load), onLoad, Modifier.weight(1f))
     }
 }
 
@@ -257,13 +262,14 @@ fun ApplyChangesBar(changeCount: Int, onApply: () -> Unit, onReset: () -> Unit) 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PrimaryButton(
-            text = if (changeCount > 0) "Apply Changes ($changeCount)" else "No Changes to Apply",
+            text = if (changeCount > 0) stringResource(R.string.apply_changes_count, changeCount)
+            else stringResource(R.string.apply_no_changes),
             onClick = onApply,
             enabled = changeCount > 0
         )
         if (changeCount > 0) {
             TextButton(onClick = onReset) {
-                Text("Reset Changes", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.reset_changes), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -342,7 +348,7 @@ fun WaitingIndicator(isCommunicating: Boolean) {
         }
         Spacer(Modifier.width(8.dp))
         Text(
-            text = if (isCommunicating) "Communicating — keep the phone still..." else "Waiting for NFC tap...",
+            text = stringResource(if (isCommunicating) R.string.waiting_communicating else R.string.waiting_tap),
             fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -357,4 +363,11 @@ fun FullScreen(content: @Composable ColumnScope.() -> Unit) {
             .background(MaterialTheme.colorScheme.background),
         content = content
     )
+}
+
+/** Resolves [UiText] in the current locale; recomposes when the configuration (e.g. language) changes. */
+@Composable
+fun UiText.asString(): String {
+    LocalConfiguration.current
+    return resolve(LocalContext.current)
 }

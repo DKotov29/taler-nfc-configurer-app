@@ -21,11 +21,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.otp_nfc_configurer.NfcStatus
+import com.example.otp_nfc_configurer.R
 import com.example.otp_nfc_configurer.TapAction
+import com.example.otp_nfc_configurer.model.UiText
+import com.example.otp_nfc_configurer.model.uiPlural
 import com.example.otp_nfc_configurer.ui.theme.ErrorContainer
 import com.example.otp_nfc_configurer.ui.theme.ErrorRed
 import com.example.otp_nfc_configurer.ui.theme.SurfaceMuted
@@ -43,12 +47,12 @@ fun DiscoverScreen(
     onSettings: () -> Unit
 ) {
     FullScreen {
-        AppTopBar(title = "Discover Device", onSettings = onSettings)
+        AppTopBar(title = stringResource(R.string.discover_title), onSettings = onSettings)
         NfcStatusBanner(nfcStatus, onEnableNfc)
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             CenteredMessage(
-                heading = "Tap Phone to Device",
-                description = "Ensure the merchant device is switched to configuration mode."
+                heading = stringResource(R.string.discover_heading),
+                description = stringResource(R.string.discover_desc)
             ) { PulseIcon(animate = nfcStatus == NfcStatus.AVAILABLE) }
         }
         Box(Modifier.fillMaxWidth().padding(bottom = 96.dp), contentAlignment = Alignment.Center) {
@@ -69,23 +73,24 @@ fun TapPromptScreen(
 ) {
     val (title, heading, description) = when (action) {
         is TapAction.LoadSlot -> Triple(
-            "Load Slot", "Tap Phone to Load Slot",
-            "Hold your phone near the device to fetch the configuration of slot ${action.index} (GET_SLOT)."
+            stringResource(R.string.tap_load_title), stringResource(R.string.tap_load_heading),
+            stringResource(R.string.tap_load_desc, action.index)
         )
         is TapAction.ApplySlot -> Triple(
-            "Apply Changes", "Tap to Confirm Write",
-            "Hold your phone near the device to transmit and execute $changeCount changed value(s) (SET_SLOT / SET_GLOBAL)."
+            stringResource(R.string.tap_apply_title), stringResource(R.string.tap_apply_heading),
+            uiPlural(R.plurals.tap_apply_desc, changeCount).asString()
         )
         is TapAction.SetupSlot -> Triple(
-            "Apply Changes", "Tap to Confirm Write",
-            "Hold your phone near the device to write the complete configuration of slot ${action.index} (SET_SLOT)."
+            stringResource(R.string.tap_apply_title), stringResource(R.string.tap_apply_heading),
+            stringResource(R.string.tap_setup_desc, action.index)
         )
         TapAction.ApplyGlobal -> Triple(
-            "Global Apply", "Apply Global Changes",
-            "Tap device to apply $changeCount changed global parameter(s) (SET_GLOBAL)."
+            stringResource(R.string.tap_global_title), stringResource(R.string.tap_global_heading),
+            uiPlural(R.plurals.tap_global_desc, changeCount).asString()
         )
         is TapAction.LoadSlotNames, TapAction.Discover, TapAction.DebugSend, TapAction.DebugRead -> Triple(
-            "Discover Device", "Tap Phone to Device", "Hold your phone near the device."
+            stringResource(R.string.discover_title), stringResource(R.string.discover_heading),
+            stringResource(R.string.tap_generic_desc)
         )
     }
     FullScreen {
@@ -104,7 +109,7 @@ fun TapPromptScreen(
             Spacer(Modifier.height(24.dp))
             if (!isCommunicating) {
                 TextButton(onClick = onCancel) {
-                    Text("Cancel", color = TextSecondary, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.action_cancel), color = TextSecondary, fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -114,19 +119,23 @@ fun TapPromptScreen(
 /** 3c. Slot Write Failed, 2g. Global Write Fail */
 @Composable
 fun FailureScreen(
-    title: String,
-    message: String,
+    title: UiText,
+    message: UiText,
     onRetry: () -> Unit,
     onAbort: () -> Unit
 ) {
+    val titleText = title.asString()
     FullScreen {
-        AppTopBar(title = title)
+        AppTopBar(title = titleText)
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-            CenteredMessage(heading = title, description = message) {
+            CenteredMessage(heading = titleText, description = message.asString()) {
                 PulseIcon(color = ErrorRed, container = ErrorContainer, animate = false) { ExclamationMark() }
             }
         }
-        BottomActions(secondary = "Abort", onSecondary = onAbort, primary = "Retry", onPrimary = onRetry)
+        BottomActions(
+            secondary = stringResource(R.string.action_abort), onSecondary = onAbort,
+            primary = stringResource(R.string.action_retry), onPrimary = onRetry
+        )
     }
 }
 
@@ -139,16 +148,15 @@ fun DeviceMismatchScreen(
     onCancel: () -> Unit
 ) {
     FullScreen {
-        AppTopBar(title = "Write Failed")
+        AppTopBar(title = stringResource(R.string.failure_write_title))
         Column(
             Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CenteredMessage(
-                heading = "Device Changed Mid-Write",
-                description = "The NFC chip serial number no longer matches the device you scanned. " +
-                        "To protect against writing to the wrong device, the operation was cancelled and no data was changed."
+                heading = stringResource(R.string.mismatch_heading),
+                description = stringResource(R.string.mismatch_desc)
             ) {
                 PulseIcon(color = WarningOrange, container = WarningContainer, animate = false) { ExclamationMark() }
             }
@@ -159,11 +167,14 @@ fun DeviceMismatchScreen(
                     .background(SurfaceMuted, RoundedCornerShape(12.dp))
                     .padding(horizontal = 16.dp, vertical = 6.dp)
             ) {
-                SerialRow("Expected Serial", expectedSerial, TextPrimary)
-                SerialRow("Detected Serial", detectedSerial, ErrorRed)
+                SerialRow(stringResource(R.string.mismatch_expected), expectedSerial, TextPrimary)
+                SerialRow(stringResource(R.string.mismatch_detected), detectedSerial, ErrorRed)
             }
         }
-        BottomActions(secondary = "Cancel", onSecondary = onCancel, primary = "Try Again", onPrimary = onRetry)
+        BottomActions(
+            secondary = stringResource(R.string.action_cancel), onSecondary = onCancel,
+            primary = stringResource(R.string.action_try_again), onPrimary = onRetry
+        )
     }
 }
 
@@ -208,13 +219,12 @@ fun NfcStatusBanner(status: NfcStatus, onEnableNfc: () -> Unit) {
         Icon(Icons.Default.Warning, contentDescription = null, tint = ErrorRed)
         Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
             Text(
-                text = if (status == NfcStatus.DISABLED) "NFC is disabled" else "NFC not supported",
+                text = stringResource(if (status == NfcStatus.DISABLED) R.string.nfc_disabled_title else R.string.nfc_unsupported_title),
                 fontWeight = FontWeight.Bold,
                 color = ErrorRed
             )
             Text(
-                text = if (status == NfcStatus.DISABLED) "Enable NFC to communicate with the device."
-                else "This phone has no NFC hardware.",
+                text = stringResource(if (status == NfcStatus.DISABLED) R.string.nfc_disabled_desc else R.string.nfc_unsupported_desc),
                 fontSize = 13.sp,
                 color = TextPrimary
             )
@@ -224,7 +234,7 @@ fun NfcStatusBanner(status: NfcStatus, onEnableNfc: () -> Unit) {
                 onClick = onEnableNfc,
                 colors = ButtonDefaults.buttonColors(containerColor = ErrorRed),
                 shape = RoundedCornerShape(8.dp)
-            ) { Text("Enable") }
+            ) { Text(stringResource(R.string.action_enable)) }
         }
     }
 }

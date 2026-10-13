@@ -26,16 +26,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.otp_nfc_configurer.R
 import com.example.otp_nfc_configurer.SetupDraft
 import com.example.otp_nfc_configurer.SlotEditor
 import com.example.otp_nfc_configurer.model.InputKind
 import com.example.otp_nfc_configurer.model.SlotField
+import com.example.otp_nfc_configurer.model.UiText
 import com.example.otp_nfc_configurer.protocol.Algorithm
 import com.example.otp_nfc_configurer.ui.theme.Border
 import com.example.otp_nfc_configurer.ui.theme.Primary
@@ -59,7 +62,7 @@ fun SlotDetailsScreen(
 ) {
     val changed = editor.changedFields
     FullScreen {
-        AppTopBar(title = "Slot Details", onBack = onBack)
+        AppTopBar(title = stringResource(R.string.slot_details_title), onBack = onBack)
         Column(
             Modifier
                 .weight(1f)
@@ -68,13 +71,13 @@ fun SlotDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                "Slot ${editor.index} Configuration",
+                stringResource(R.string.slot_details_heading, editor.index),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
             if (isActiveSlot) {
-                StatusChip("Active slot")
+                StatusChip(stringResource(R.string.slot_active_chip))
             } else {
                 OutlinedButton(
                     onClick = onToggleMakeActive,
@@ -86,7 +89,7 @@ fun SlotDetailsScreen(
                     )
                 ) {
                     Text(
-                        if (editor.makeActive) "• Will be set as Active Slot (undo)" else "Set as Active Slot",
+                        stringResource(if (editor.makeActive) R.string.slot_make_active_pending else R.string.slot_make_active),
                         color = Primary,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 13.sp
@@ -97,9 +100,9 @@ fun SlotDetailsScreen(
                 TemplateButtons(onSave = onSaveTemplate, onLoad = onLoadTemplate)
                 SlotField.entries.forEach { field ->
                     InfoRow(
-                        label = field.label,
-                        value = if (field == SlotField.SECRET && editor.newSecret != null) "New secret set"
-                        else field.display(editor.draft),
+                        label = stringResource(field.label),
+                        value = if (field == SlotField.SECRET && editor.newSecret != null) stringResource(R.string.slot_new_secret)
+                        else field.display(editor.draft).asString(),
                         pending = field in changed,
                         onEdit = { onEdit(field) },
                         showDivider = field != SlotField.entries.last()
@@ -122,7 +125,7 @@ fun SetupSlotScreen(
     onLoadTemplate: () -> Unit
 ) {
     FullScreen {
-        AppTopBar(title = "Setup Slot ${draft.index}", onBack = onBack)
+        AppTopBar(title = stringResource(R.string.setup_title, draft.index), onBack = onBack)
         Column(
             Modifier
                 .weight(1f)
@@ -137,8 +140,8 @@ fun SetupSlotScreen(
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Scan QR to Prefill", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
-                SectionLabel("Coming soon")
+                Text(stringResource(R.string.setup_scan_qr), color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+                SectionLabel(stringResource(R.string.setup_coming_soon))
             }
             TemplateButtons(onSave = onSaveTemplate, onLoad = onLoadTemplate)
 
@@ -148,7 +151,7 @@ fun SetupSlotScreen(
             )
             setupOrder.forEach { field ->
                 Spacer(Modifier.height(4.dp))
-                SectionLabel(field.label)
+                SectionLabel(stringResource(field.label))
                 val value = draft.values[field].orEmpty()
                 if (field.kind == InputKind.ALGORITHM) {
                     AlgorithmSelector(selectedCode = value.toIntOrNull(), onSelect = { onValueChange(field, it.code.toString()) })
@@ -161,9 +164,9 @@ fun SetupSlotScreen(
             Modifier.fillMaxWidth().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PrimaryButton("Tap to Apply Changes", onApply)
+            PrimaryButton(stringResource(R.string.setup_apply), onApply)
             Spacer(Modifier.height(6.dp))
-            Text("Requires physical NFC touch to execute write operation.", fontSize = 12.sp, color = TextSecondary)
+            Text(stringResource(R.string.setup_apply_note), fontSize = 12.sp, color = TextSecondary)
         }
     }
 }
@@ -200,7 +203,7 @@ fun AlgorithmSelector(selectedCode: Int?, onSelect: (Algorithm) -> Unit) {
 fun FieldTextInput(
     field: SlotField,
     value: String,
-    error: String?,
+    error: UiText?,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -210,7 +213,7 @@ fun FieldTextInput(
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
         isError = error != null,
-        supportingText = { Text(error ?: field.hint, color = if (error != null) androidx.compose.material3.MaterialTheme.colorScheme.error else TextSecondary) },
+        supportingText = { Text((error ?: field.hint).asString(), color = if (error != null) androidx.compose.material3.MaterialTheme.colorScheme.error else TextSecondary) },
         visualTransformation = if (field.kind == InputKind.SECRET) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(
             keyboardType = when (field.kind) {

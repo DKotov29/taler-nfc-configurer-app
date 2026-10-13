@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -32,8 +33,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.otp_nfc_configurer.EditTarget
+import com.example.otp_nfc_configurer.R
 import com.example.otp_nfc_configurer.model.InputKind
 import com.example.otp_nfc_configurer.model.SlotField
+import com.example.otp_nfc_configurer.model.UiText
 import com.example.otp_nfc_configurer.ui.theme.Border
 import com.example.otp_nfc_configurer.ui.theme.TextPrimary
 import com.example.otp_nfc_configurer.ui.theme.TextSecondary
@@ -44,14 +47,15 @@ import com.example.otp_nfc_configurer.ui.theme.TextSecondary
 fun EditFieldSheet(
     target: EditTarget,
     initialValue: String,
-    error: String?,
+    error: UiText?,
     onDismiss: () -> Unit,
     onSave: (String) -> Unit
 ) {
-    val (label, hint, kind) = when (target) {
+    val (labelRes, hint, kind) = when (target) {
         is EditTarget.Slot -> Triple(target.field.label, target.field.hint, target.field.kind)
         is EditTarget.Global -> Triple(target.field.label, target.field.hint, InputKind.TEXT)
     }
+    val label = stringResource(labelRes)
     var value by rememberSaveable(target) { mutableStateOf(initialValue) }
 
     ModalBottomSheet(
@@ -66,7 +70,7 @@ fun EditFieldSheet(
                 .padding(bottom = 16.dp)
                 .imePadding()
         ) {
-            Text("Edit $label", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+            Text(stringResource(R.string.edit_field, label), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Spacer(Modifier.height(12.dp))
             SectionLabel(label)
             Spacer(Modifier.height(8.dp))
@@ -84,7 +88,7 @@ fun EditFieldSheet(
                             modifier = Modifier.weight(1f),
                             singleLine = true,
                             isError = error != null,
-                            placeholder = { if (kind == InputKind.SECRET) Text("e.g. JBSWY3DPEHPK3PXP") },
+                            placeholder = { if (kind == InputKind.SECRET) Text(stringResource(R.string.edit_secret_placeholder, "JBSWY3DPEHPK3PXP")) },
                             visualTransformation = if (kind == InputKind.SECRET) PasswordVisualTransformation() else VisualTransformation.None,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = when (kind) {
@@ -108,15 +112,15 @@ fun EditFieldSheet(
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                text = error ?: hint,
+                text = (error ?: hint).asString(),
                 fontSize = 12.sp,
                 color = if (error != null) MaterialTheme.colorScheme.error else TextSecondary,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(24.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlineButton("Cancel", onDismiss, Modifier.weight(1f))
-                DarkButton("Save", { onSave(value) }, Modifier.weight(1f))
+                OutlineButton(stringResource(R.string.action_cancel), onDismiss, Modifier.weight(1f))
+                DarkButton(stringResource(R.string.action_save), { onSave(value) }, Modifier.weight(1f))
             }
         }
     }

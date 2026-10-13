@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.example.otp_nfc_configurer.DeviceSession
 import com.example.otp_nfc_configurer.GlobalEditor
 import com.example.otp_nfc_configurer.LoadState
+import com.example.otp_nfc_configurer.R
 import com.example.otp_nfc_configurer.model.GlobalField
 import com.example.otp_nfc_configurer.model.SlotSummary
 import com.example.otp_nfc_configurer.ui.theme.Border
@@ -55,7 +57,7 @@ fun OverviewScreen(
 ) {
     val changed = globalEditor?.changedFields.orEmpty()
     FullScreen {
-        AppTopBar(title = "Available Slots", onBack = onBack, onSettings = onSettings)
+        AppTopBar(title = stringResource(R.string.overview_title), onBack = onBack, onSettings = onSettings)
         Column(
             Modifier
                 .weight(1f)
@@ -65,24 +67,28 @@ fun OverviewScreen(
         ) {
             SectionCard {
                 if (globalEditor != null) TemplateButtons(onSave = onSaveTemplate, onLoad = onLoadTemplate)
-                SectionLabel("Device Information", Modifier.padding(top = 8.dp, bottom = 4.dp))
+                SectionLabel(stringResource(R.string.overview_device_info), Modifier.padding(top = 8.dp, bottom = 4.dp))
                 val draft = globalEditor?.draft
                 InfoRow(
-                    label = GlobalField.DEVICE_ID.label,
+                    label = stringResource(GlobalField.DEVICE_ID.label),
                     value = draft?.deviceId ?: session.info.deviceId,
                     pending = GlobalField.DEVICE_ID in changed,
                     onEdit = draft?.let { { onEditGlobal(GlobalField.DEVICE_ID) } }
                 )
-                InfoRow(label = "Active Slot", value = "Slot ${session.info.activeSlotIndex}", emphasized = true)
+                InfoRow(
+                    label = stringResource(R.string.overview_active_slot),
+                    value = stringResource(R.string.slot_number, session.info.activeSlotIndex),
+                    emphasized = true
+                )
                 if (draft != null) {
                     InfoRow(
-                        label = GlobalField.MERCHANT_BACKEND.label,
+                        label = stringResource(GlobalField.MERCHANT_BACKEND.label),
                         value = draft.merchantBackend.ifEmpty { "—" },
                         pending = GlobalField.MERCHANT_BACKEND in changed,
                         onEdit = { onEditGlobal(GlobalField.MERCHANT_BACKEND) }
                     )
                     InfoRow(
-                        label = GlobalField.DEVICE_DESCRIPTION.label,
+                        label = stringResource(GlobalField.DEVICE_DESCRIPTION.label),
                         value = draft.deviceDescription.ifEmpty { "—" },
                         pending = GlobalField.DEVICE_DESCRIPTION in changed,
                         onEdit = { onEditGlobal(GlobalField.DEVICE_DESCRIPTION) }
@@ -100,16 +106,16 @@ fun OverviewScreen(
                     ) {
                         CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = Primary)
                         Spacer(Modifier.width(12.dp))
-                        SectionLabel("Loading slot names...")
+                        SectionLabel(stringResource(R.string.overview_loading_names))
                     }
                 }
                 LoadState.FAILED -> TapToLoadCard(
-                    heading = "Couldn't Load Slot Names",
-                    description = "Tap your phone to the device again to retry."
+                    heading = stringResource(R.string.overview_load_failed_title),
+                    description = stringResource(R.string.overview_load_failed_desc)
                 )
                 LoadState.NOT_LOADED -> TapToLoadCard(
-                    heading = "Slots ${session.pageRange.first}–${session.pageRange.last}",
-                    description = "Tap your phone to the device to load the slot names."
+                    heading = stringResource(R.string.overview_slots_range, session.pageRange.first, session.pageRange.last),
+                    description = stringResource(R.string.overview_tap_to_load)
                 )
             }
 
@@ -125,7 +131,7 @@ fun OverviewScreen(
 
 @Composable
 private fun SlotList(session: DeviceSession, onSlotClick: (Int) -> Unit) {
-    SectionCard(title = "Available Slots") {
+    SectionCard(title = stringResource(R.string.overview_title)) {
         val range = session.pageRange
         range.forEach { index ->
             SlotRow(
@@ -150,14 +156,15 @@ private fun SlotRow(index: Int, summary: SlotSummary?, isActive: Boolean, onClic
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = if (name != null) "Slot $index · $name" else "Slot $index",
+            text = if (name != null) stringResource(R.string.slot_number_named, index, name)
+            else stringResource(R.string.slot_number, index),
             fontSize = 14.sp,
             fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
             color = MaterialTheme.colorScheme.onSurface
         )
         if (isActive) {
             Text(
-                "ACTIVE",
+                stringResource(R.string.slot_active_badge),
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 color = Primary,
@@ -165,7 +172,7 @@ private fun SlotRow(index: Int, summary: SlotSummary?, isActive: Boolean, onClic
             )
         }
         Spacer(Modifier.weight(1f))
-        StatusChip(if (summary is SlotSummary.Configured) "Configured" else "Empty")
+        StatusChip(stringResource(if (summary is SlotSummary.Configured) R.string.slot_status_configured else R.string.slot_status_empty))
         Icon(
             Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
@@ -199,16 +206,16 @@ private fun Pagination(session: DeviceSession, onPageChange: (Int) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = { onPageChange(-1) }, enabled = session.page > 0) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous page")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.page_previous))
         }
         val range = session.pageRange
         Text(
-            "Slots ${range.first + 1}–${range.last + 1} of ${session.info.slotCount}",
+            stringResource(R.string.pagination, range.first + 1, range.last + 1, session.info.slotCount),
             fontSize = 13.sp,
             color = TextSecondary
         )
         IconButton(onClick = { onPageChange(1) }, enabled = session.page < session.pageCount - 1) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next page")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.page_next))
         }
     }
 }
