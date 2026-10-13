@@ -75,6 +75,26 @@ enum class SlotField(val param: Int, @StringRes val label: Int, val kind: InputK
         SECRET -> ""
     }
 
+    /** Valid values of numeric fields with a stepper, null otherwise. */
+    val range: IntRange?
+        get() = when (this) {
+            DIGITS -> Protocol.Limits.MIN_DIGITS..Protocol.Limits.MAX_DIGITS
+            INTERVAL -> Protocol.Limits.MIN_INTERVAL..Protocol.Limits.MAX_INTERVAL
+            else -> null
+        }
+
+    /** Cuts [input] to what the field can hold, so longer values cannot be typed at all. */
+    fun limit(input: String): String = when (this) {
+        SLOT_NAME -> InputLimit.bytes(input, Protocol.Size.SLOT_NAME - 1)
+        CURRENCY -> InputLimit.bytes(input, Protocol.Size.CURRENCY - 1)
+        MERCHANT_TEMPLATE -> InputLimit.bytes(input, Protocol.Size.MERCHANT_TEMPLATE - 1)
+        DIGITS -> InputLimit.digits(input, Protocol.Limits.MAX_DIGITS.toString().length)
+        INTERVAL -> InputLimit.digits(input, Protocol.Limits.MAX_INTERVAL.toString().length)
+        FRACTION -> InputLimit.digits(input, Protocol.Limits.MAX_FRACTION.toString().length)
+        SECRET -> InputLimit.base32(input, Base32.encodedLength(Protocol.Size.SECRET))
+        ALGORITHM -> input
+    }
+
     /** Applies [input] to [config]. Not applicable to [SECRET], see [parseSecret]. */
     fun apply(config: SlotConfig, input: String): FieldInput<SlotConfig> = when (this) {
         SLOT_NAME -> validateString(input, Protocol.Size.SLOT_NAME) { config.copy(slotName = it) }
@@ -101,9 +121,10 @@ enum class SlotField(val param: Int, @StringRes val label: Int, val kind: InputK
         val readable = entries.filter { it != SECRET }
 
         fun parseSecret(input: String): FieldInput<ByteArray> {
+            if (Base32.significant(input).isEmpty()) return FieldInput.Invalid(uiText(R.string.error_secret_empty))
             val bytes = Base32.decode(input) ?: return FieldInput.Invalid(uiText(R.string.error_base32))
             return when {
-                bytes.isEmpty() -> FieldInput.Invalid(uiText(R.string.error_secret_empty))
+                bytes.isEmpty() -> FieldInput.Invalid(uiText(R.string.error_base32))
                 bytes.size > Protocol.Size.SECRET -> FieldInput.Invalid(uiText(R.string.error_secret_too_long, Protocol.Size.SECRET))
                 else -> FieldInput.Valid(bytes)
             }
@@ -123,6 +144,13 @@ enum class GlobalField(val param: Int, @StringRes val label: Int, val hint: UiTe
         DEVICE_ID -> config.deviceId
         MERCHANT_BACKEND -> config.merchantBackend
         DEVICE_DESCRIPTION -> config.deviceDescription
+    }
+
+    /** Cuts [input] to what the field can hold, so longer values cannot be typed at all. */
+    fun limit(input: String): String = when (this) {
+        DEVICE_ID -> InputLimit.bytes(input, Protocol.Size.DEVICE_ID - 1)
+        MERCHANT_BACKEND -> InputLimit.bytes(input, Protocol.Size.MERCHANT_BACKEND - 1)
+        DEVICE_DESCRIPTION -> InputLimit.bytes(input, Protocol.Size.DEVICE_DESCRIPTION - 1)
     }
 
     fun apply(config: GlobalConfig, input: String): FieldInput<GlobalConfig> = when (this) {
@@ -163,9 +191,21 @@ private fun isPowerOfTen(value: Long): Boolean {
 object Base32 {
     private const val ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
-    /** RFC 4648 decoding; ignores whitespace, dashes, padding and case. Returns null on invalid input. */
+    /** Characters without separators (whitespace, dashes) and padding. */
+    fun significant(input: String): String = input.filterNot(::isIgnored)
+
+    fun isIgnored(c: Char): Boolean = c.isWhitespace() || c == '-' || c == '='
+
+    /** Number of Base32 characters (without padding) encoding [bytes] bytes. */
+    fun encodedLength(bytes: Int): Int = (bytes * 8 + 4) / 5
+
+    /**
+     * RFC 4648 decoding; ignores whitespace, dashes, padding and case. Returns null on invalid input,
+     * including lengths no byte sequence encodes to (1, 3 or 6 characters in the last group).
+     */
     fun decode(input: String): ByteArray? {
-        val clean = input.uppercase().filterNot { it.isWhitespace() || it == '-' || it == '=' }
+        val clean = significant(input).uppercase()
+        if (clean.length % 8 in INVALID_TAIL_LENGTHS) return null
         val out = java.io.ByteArrayOutputStream()
         var buffer = 0
         var bits = 0
@@ -180,5 +220,60 @@ object Base32 {
             }
         }
         return out.toByteArray()
+    }
+
+    private val INVALID_TAIL_LENGTHS = setOf(1, 3, 6)
+}
+
+/** Truncation helpers that keep typed input within a field's capacity. */
+object InputLimit {
+    /** Longest prefix of [input] whose UTF-8 encoding fits into [maxBytes], never splitting a character. */
+    fun bytes(input: String, maxBytes: Int): String {
+        var used = 0
+        var end = 0
+        while (end < input.length) {
+            val codePoint = input.codePointAt(end)
+            val size = when {
+                codePoint < 0x80 -> 1
+                codePoint < 0x800 -> 2
+                codePoint < 0x10000 -> 3
+                else -> 4
+            }
+            if (used + size > maxBytes) break
+            used += size
+            end += Character.charCount(codePoint)
+        }
+        return input.substring(0, end)
+    }
+
+    /** Only digits, at most [maxLength] of them. */
+    fun digits(input: String, maxLength: Int): String = input.filter { it in '0'..'9' }.take(maxLength)
+
+    /** At most [maxChars] Base32 characters; separators and padding do not count. */
+    fun base32(input: String, maxChars: Int): String {
+        var count = 0
+        val out = StringBuilder()
+        for (c in input) {
+            if (!Base32.isIgnored(c)) {
+                if (count == maxChars) break
+                count++
+            }
+            out.append(c)
+        }
+        return out.toString()
+    }
+}
+
+/**
+ * New text field value after the user changed [old] to [proposed]: accepted when it fits, otherwise cut
+ * to the field's capacity if that still adds something (e.g. pasting), else the change is rejected.
+ */
+fun limitedInput(old: String, proposed: String, limit: (String) -> String): String {
+    val limited = limit(proposed)
+    return when {
+        limited == proposed -> proposed
+        proposed.length < old.length -> proposed // Deleting is always possible
+        limited.length > old.length && limited.startsWith(old) -> limited
+        else -> old
     }
 }

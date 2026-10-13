@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.sp
 import com.example.otp_nfc_configurer.EditTarget
 import com.example.otp_nfc_configurer.R
 import com.example.otp_nfc_configurer.model.InputKind
-import com.example.otp_nfc_configurer.model.SlotField
+import com.example.otp_nfc_configurer.model.limitedInput
 import com.example.otp_nfc_configurer.model.UiText
 import com.example.otp_nfc_configurer.ui.theme.Border
 import com.example.otp_nfc_configurer.ui.theme.TextPrimary
@@ -76,6 +76,11 @@ fun EditFieldSheet(
         is EditTarget.Slot -> Triple(target.field.label, target.field.hint, target.field.kind)
         is EditTarget.Global -> Triple(target.field.label, target.field.hint, InputKind.TEXT)
     }
+    val limit: (String) -> String = when (target) {
+        is EditTarget.Slot -> target.field::limit
+        is EditTarget.Global -> target.field::limit
+    }
+    val range = (target as? EditTarget.Slot)?.field?.range
     val label = stringResource(labelRes)
     var value by rememberSaveable(target) { mutableStateOf(initialValue) }
 
@@ -105,7 +110,7 @@ fun EditFieldSheet(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         OutlinedTextField(
                             value = value,
-                            onValueChange = { value = it },
+                            onValueChange = { value = limitedInput(value, it, limit) },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
                             isError = error != null,
@@ -121,11 +126,11 @@ fun EditFieldSheet(
                             shape = RoundedCornerShape(10.dp),
                             colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = MaterialTheme.colorScheme.outline)
                         )
-                        if (kind == InputKind.NUMBER && target is EditTarget.Slot && target.field != SlotField.FRACTION) {
+                        if (range != null) {
                             Spacer(Modifier.padding(start = 8.dp))
                             Stepper(
-                                onDecrement = { value = ((value.toIntOrNull() ?: 0) - 1).toString() },
-                                onIncrement = { value = ((value.toIntOrNull() ?: 0) + 1).toString() }
+                                onDecrement = { value = ((value.toIntOrNull() ?: range.first) - 1).coerceIn(range).toString() },
+                                onIncrement = { value = ((value.toIntOrNull() ?: range.first) + 1).coerceIn(range).toString() }
                             )
                         }
                     }

@@ -60,6 +60,7 @@ import com.example.otp_nfc_configurer.SlotEditor
 import com.example.otp_nfc_configurer.model.InputKind
 import com.example.otp_nfc_configurer.model.SlotField
 import com.example.otp_nfc_configurer.model.UiText
+import com.example.otp_nfc_configurer.model.limitedInput
 import com.example.otp_nfc_configurer.protocol.Algorithm
 import com.example.otp_nfc_configurer.ui.theme.Border
 import com.example.otp_nfc_configurer.ui.theme.Primary
@@ -230,7 +231,7 @@ fun FieldTextInput(
 ) {
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { onValueChange(limitedInput(value, it, field::limit)) },
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
         isError = error != null,
