@@ -175,6 +175,10 @@
     <string name="theme_dark">Темна</string>
     <string name="settings_language">Мова (%1$s)</string>
     <string name="settings_language_dialog">Вибір мови</string>
+    <string name="settings_about">Про застосунок</string>
+    <string name="about_version">Версія %1$s</string>
+    <string name="about_license_notice">Ця програма є вільним програмним забезпеченням: ви можете поширювати та/або змінювати її на умовах GNU General Public License, опублікованої Free Software Foundation, версії 3 або (на ваш вибір) будь-якої пізнішої версії.\n\nЦя програма поширюється БЕЗ БУДЬ-ЯКИХ ГАРАНТІЙ, навіть без неявної гарантії ПРИДАТНОСТІ ДО ПРОДАЖУ чи ПРИДАТНОСТІ ДЛЯ ПЕВНОЇ МЕТИ.</string>
+    <string name="about_view_license">Переглянути ліцензію</string>
     <string name="language_system">Як у системі</string>
     <string name="language_english">Англійська</string>
     <string name="language_german">Німецька</string>

@@ -169,6 +169,10 @@
     <string name="theme_dark">Dunku</string>
     <string name="settings_language">Sprach (%1$s)</string>
     <string name="settings_language_dialog">Sprach uswähle</string>
+    <string name="settings_about">Über d App</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_license_notice">Das Programm isch freii Software: Si chönd s under de Bedingige vo de GNU General Public License, wie si vo de Free Software Foundation veröffentlicht worde isch, wiitergäh und/oder verändere, entweder nach Version 3 vo de Lizänz oder (nach Ihrere Wahl) jedere spötere Version.\n\nDas Programm wird OHNI JEGLICHI GARANTIE bereitgstellt, nöd emal mit de implizite Garantie vo de MARCHTFÄHIGKEIT oder de EIGNIG FÜR ES BESTIMMTS ZWÄCK.</string>
+    <string name="about_view_license">Lizänz aazeige</string>
     <string name="language_system">Wie ds System</string>
     <string name="language_english">Änglisch</string>
     <string name="language_german">Hochdütsch</string>

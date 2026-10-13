@@ -1,3 +1,24 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Taler Systems S.A.
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This file is part of GNU Taler
+ * (C) 2026 Taler Systems S.A.
+ *
+ * GNU Taler is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * GNU Taler is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GNU Taler.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.example.otp_nfc_configurer.ui
 
 import androidx.compose.foundation.background
@@ -10,6 +31,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,6 +54,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +83,7 @@ fun SettingsScreen(
 ) {
     var showThemeDialog by rememberSaveable { mutableStateOf(false) }
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    var showAboutDialog by rememberSaveable { mutableStateOf(false) }
 
     FullScreen {
         AppTopBar(title = stringResource(R.string.settings_title), onBack = onBack)
@@ -71,6 +97,10 @@ fun SettingsScreen(
             title = stringResource(R.string.settings_language, languageName(currentLanguage)),
             onClick = { showLanguageDialog = true }
         )
+        SettingsEntry(stringResource(R.string.settings_about), onClick = { showAboutDialog = true })
+    }
+    if (showAboutDialog) {
+        AboutDialog(onDismiss = { showAboutDialog = false })
     }
     if (showThemeDialog) {
         ChoiceDialog(
@@ -96,6 +126,37 @@ fun SettingsScreen(
             onDismiss = { showLanguageDialog = false }
         )
     }
+}
+
+private const val LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.html"
+
+/** App name, version, copyright and the GPL notice (GPLv3 section 0, "Appropriate Legal Notices"). */
+@Composable
+private fun AboutDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val versionName = runCatching {
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName
+    }.getOrNull().orEmpty()
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.app_name)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.about_version, versionName), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.about_copyright), color = MaterialTheme.colorScheme.onSurface)
+                Text(stringResource(R.string.about_license_notice), fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) }
+        },
+        dismissButton = {
+            TextButton(onClick = { runCatching { uriHandler.openUri(LICENSE_URL) } }) {
+                Text(stringResource(R.string.about_view_license))
+            }
+        }
+    )
 }
 
 @Composable

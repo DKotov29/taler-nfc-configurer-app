@@ -167,6 +167,10 @@
     <string name="theme_dark">Dunkel</string>
     <string name="settings_language">Sprache (%1$s)</string>
     <string name="settings_language_dialog">Sprache auswählen</string>
+    <string name="settings_about">Über die App</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_license_notice">Dieses Programm ist freie Software: Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder modifizieren, entweder gemäß Version 3 der Lizenz oder (nach Ihrer Wahl) jeder späteren Version.\n\nDieses Programm wird OHNE JEDE GEWÄHRLEISTUNG bereitgestellt, sogar ohne die implizite Gewährleistung der MARKTFÄHIGKEIT oder der EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.</string>
+    <string name="about_view_license">Lizenz anzeigen</string>
     <string name="language_system">Systemstandard</string>
     <string name="language_english">Englisch</string>
     <string name="language_german">Deutsch</string>
