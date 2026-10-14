@@ -22,6 +22,7 @@
 package com.example.otp_nfc_configurer.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,8 +38,11 @@ data class SavedConfig(
     val values: Map<String, String>
 )
 
-class SavedConfigRepository(context: Context) {
-    private val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+class SavedConfigRepository(private val prefs: SharedPreferences) {
+    constructor(context: Context) : this(
+        context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    )
+
     private val _configs = MutableStateFlow(load())
     val configs: StateFlow<List<SavedConfig>> = _configs.asStateFlow()
 

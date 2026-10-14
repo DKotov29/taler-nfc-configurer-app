@@ -22,6 +22,7 @@
 package com.example.otp_nfc_configurer.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.annotation.StringRes
 import com.example.otp_nfc_configurer.R
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,8 +35,11 @@ enum class AppTheme(@StringRes val title: Int) {
     DARK(R.string.theme_dark)
 }
 
-class ThemePreferences(context: Context) {
-    private val prefs = context.applicationContext.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+class ThemePreferences(private val prefs: SharedPreferences) {
+    constructor(context: Context) : this(
+        context.applicationContext.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+    )
+
     private val _theme = MutableStateFlow(loadTheme())
     val theme: StateFlow<AppTheme> = _theme.asStateFlow()
 

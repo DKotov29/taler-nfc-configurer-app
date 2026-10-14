@@ -153,8 +153,8 @@ class NdefTransport private constructor(tag: Tag) : NfcTransport {
 
         /** True if [tag] is still in the field and can be connected again. */
         fun isPresent(tag: Tag): Boolean {
-            val technology: TagTechnology = NfcV.get(tag) ?: Ndef.get(tag) ?: return false
             return try {
+                val technology: TagTechnology = NfcV.get(tag) ?: Ndef.get(tag) ?: return false
                 technology.connect()
                 closeQuietly(technology)
                 true
