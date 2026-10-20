@@ -100,7 +100,7 @@
     <string name="field_digits">Codelängi</string>
     <string name="field_interval">Intervall</string>
     <string name="field_currency">Währig</string>
-    <string name="field_fraction">Bruchteil</string>
+    <string name="field_fraction">Dezimalfaktor</string>
     <string name="field_merchant_template">Händlervorlag</string>
     <string name="field_secret">Gheime Schlüssu</string>
     <string name="field_device_id">Grät-ID</string>

@@ -3,7 +3,7 @@
     <string name="action_back">Zurück</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_cancel">Abbrechen</string>
-    <string name="action_close">Schließen</string>
+    <string name="action_close">Schliessen</string>
     <string name="action_save">Speichern</string>
     <string name="action_delete">Löschen</string>
     <string name="action_retry">Wiederholen</string>
@@ -18,28 +18,28 @@
     <string name="apply_changes_count">Änderungen übernehmen (%1$d)</string>
     <string name="apply_no_changes">Keine Änderungen vorhanden</string>
     <string name="reset_changes">Änderungen verwerfen</string>
-    <string name="waiting_communicating">Kommunikation läuft – Telefon ruhig halten…</string>
+    <string name="waiting_communicating">Kommunikation läuft - Telefon ruhig halten…</string>
     <string name="waiting_tap">Warte auf NFC-Kontakt…</string>
 
     <!-- Discover and tap prompts -->
     <string name="discover_title">Gerät suchen</string>
     <string name="discover_heading">Telefon an das Gerät halten</string>
-    <string name="discover_desc">Stellen Sie sicher, dass sich das Händlergerät im Konfigurationsmodus befindet.</string>
+    <string name="discover_desc">Stellen Sie sicher, dass sich das xOTP-Gerät im Konfigurationsmodus befindet.</string>
     <string name="tap_load_title">Slot laden</string>
     <string name="tap_load_heading">Telefon zum Laden anhalten</string>
-    <string name="tap_load_desc">Halten Sie Ihr Telefon an das Gerät, um die Konfiguration von Slot %1$d abzurufen (GET_SLOT).</string>
+    <string name="tap_load_desc">Halten Sie Ihr Telefon an das Gerät, um die Konfiguration von Slot %1$d abzurufen.</string>
     <string name="tap_apply_title">Änderungen übernehmen</string>
-    <string name="tap_apply_heading">Schreiben durch Antippen bestätigen</string>
+    <string name="tap_apply_heading">Zum Schreiben Gerät antippen</string>
     <plurals name="tap_apply_desc">
-        <item quantity="one">Halten Sie Ihr Telefon an das Gerät, um %d geänderten Wert zu übertragen und auszuführen (SET_SLOT / SET_GLOBAL).</item>
-        <item quantity="other">Halten Sie Ihr Telefon an das Gerät, um %d geänderte Werte zu übertragen und auszuführen (SET_SLOT / SET_GLOBAL).</item>
+        <item quantity="one">Halten Sie Ihr Telefon an das Gerät, um %d geänderten Wert zu übertragen und auszuführen.</item>
+        <item quantity="other">Halten Sie Ihr Telefon an das Gerät, um %d geänderte Werte zu übertragen und auszuführen.</item>
     </plurals>
-    <string name="tap_setup_desc">Halten Sie Ihr Telefon an das Gerät, um die vollständige Konfiguration von Slot %1$d zu schreiben (SET_SLOT).</string>
-    <string name="tap_global_title">Global übernehmen</string>
+    <string name="tap_setup_desc">Halten Sie Ihr Telefon an das Gerät, um die vollständige Konfiguration von Slot %1$d zu schreiben.</string>
+    <string name="tap_global_title">Globale Änderung übernehmen</string>
     <string name="tap_global_heading">Globale Änderungen übernehmen</string>
     <plurals name="tap_global_desc">
-        <item quantity="one">Gerät antippen, um %d geänderten globalen Parameter zu übernehmen (SET_GLOBAL).</item>
-        <item quantity="other">Gerät antippen, um %d geänderte globale Parameter zu übernehmen (SET_GLOBAL).</item>
+        <item quantity="one">Gerät antippen, um %d geänderten globalen Parameter zu übernehmen.</item>
+        <item quantity="other">Gerät antippen, um %d geänderte globale Parameter zu übernehmen.</item>
     </plurals>
     <string name="tap_generic_desc">Halten Sie Ihr Telefon an das Gerät.</string>
 
@@ -68,16 +68,16 @@
     <string name="overview_loading_names">Slot-Namen werden geladen…</string>
     <string name="overview_load_failed_title">Slot-Namen konnten nicht geladen werden</string>
     <string name="overview_load_failed_desc">Halten Sie Ihr Telefon erneut an das Gerät, um es nochmals zu versuchen.</string>
-    <string name="overview_slots_range">Slots %1$d–%2$d</string>
+    <string name="overview_slots_range">Slots %1$d-%2$d</string>
     <string name="overview_tap_to_load">Halten Sie Ihr Telefon an das Gerät, um die Slot-Namen zu laden.</string>
     <string name="slot_number">Slot %1$d</string>
     <string name="slot_number_named">Slot %1$d · %2$s</string>
     <string name="slot_active_badge">AKTIV</string>
     <string name="slot_status_configured">Konfiguriert</string>
     <string name="slot_status_empty">Leer</string>
-    <string name="page_previous">Vorherige Seite</string>
+    <string name="page_previous">Eine Seite zurück</string>
     <string name="page_next">Nächste Seite</string>
-    <string name="pagination">Slots %1$d–%2$d von %3$d</string>
+    <string name="pagination">Slots %1$d-%2$d von %3$d</string>
 
     <!-- Slot details and setup -->
     <string name="slot_details_title">Slot-Details</string>
@@ -98,15 +98,15 @@
     <string name="field_digits">Codelänge</string>
     <string name="field_interval">Intervall</string>
     <string name="field_currency">Währung</string>
-    <string name="field_fraction">Bruchteil</string>
+    <string name="field_fraction">Dezimalfaktor</string>
     <string name="field_merchant_template">Händlervorlage</string>
     <string name="field_secret">Geheimer Schlüssel</string>
     <string name="field_device_id">Geräte-ID</string>
-    <string name="field_merchant_backend">Händler-Backend</string>
+    <string name="field_merchant_backend">Händler-Backend-Link</string>
     <string name="field_device_description">Gerätebeschreibung</string>
     <string name="hint_max_bytes">Bis zu %1$d Bytes.</string>
-    <string name="hint_digits">Zulässiger Bereich: %1$d–%2$d Stellen</string>
-    <string name="hint_interval">Zulässiger Bereich: %1$d–%2$d Sekunden</string>
+    <string name="hint_digits">Zulässiger Bereich: %1$d-%2$d Stellen</string>
+    <string name="hint_interval">Zulässiger Bereich: %1$d-%2$d Sekunden</string>
     <string name="hint_currency">Bis zu %1$d Bytes, z. B. KUDOS.</string>
     <string name="hint_fraction">Zehnerpotenz bis %1$d, z. B. 100 für Cent.</string>
     <string name="hint_secret">Base32-kodiert, bis zu %1$d Bytes. Nur schreibbar.</string>
@@ -129,7 +129,7 @@
     <string name="error_not_empty">Darf nicht leer sein</string>
     <string name="error_invalid_chars">Enthält ungültige Zeichen</string>
     <string name="error_max_bytes">Höchstens %1$d Bytes erlaubt</string>
-    <string name="error_range">Zulässiger Bereich: %1$d–%2$d</string>
+    <string name="error_range">Zulässiger Bereich: %1$d-%2$d</string>
     <string name="error_no_slot">Kein Slot geladen</string>
 
     <!-- Communication errors -->
@@ -209,7 +209,7 @@
     <string name="debug_payload">Nutzdaten</string>
     <string name="debug_hide_advanced">Erweitert ausblenden</string>
     <string name="debug_show_advanced">Erweitert: Version, Prüfsumme</string>
-    <string name="debug_version">Protokollversion (0–15)</string>
+    <string name="debug_version">Protokollversion (0-15)</string>
     <string name="debug_auto_checksum">Automatische XOR-Prüfsumme</string>
     <string name="debug_checksum_byte">Prüfsummen-Byte</string>
     <string name="debug_checksum_hint">Ein Hex-Byte, z. B. FF, um ERR_CHECKSUM auszulösen</string>
