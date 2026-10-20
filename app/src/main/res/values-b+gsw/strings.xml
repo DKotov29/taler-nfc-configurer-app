@@ -3,9 +3,9 @@
 
     <!-- Common actions -->
     <string name="action_back">Zrügg</string>
-    <string name="action_settings">Ystellige</string>
+    <string name="action_settings">Istellige</string>
     <string name="action_cancel">Abbräche</string>
-    <string name="action_close">Zuemache</string>
+    <string name="action_close">Zuedue</string>
     <string name="action_save">Spichere</string>
     <string name="action_delete">Lösche</string>
     <string name="action_retry">Nomau probiere</string>
@@ -20,66 +20,66 @@
     <string name="apply_changes_count">Änderige übernäh (%1$d)</string>
     <string name="apply_no_changes">Kei Änderige vorhande</string>
     <string name="reset_changes">Änderige rückgängig mache</string>
-    <string name="waiting_communicating">Kommunikation louft – ds Handy ruehig ha…</string>
-    <string name="waiting_tap">Warte uf NFC-Kontakt…</string>
+    <string name="waiting_communicating">Kommunikation louft - ds Handy still ha…</string>
+    <string name="waiting_tap">Warte uf NFC-Grät…</string>
 
     <!-- Discover and tap prompts -->
     <string name="discover_title">Grät sueche</string>
-    <string name="discover_heading">Handy as Grät ha</string>
-    <string name="discover_desc">Lueg, dass ds Händlergrät im Konfigurationsmodus isch.</string>
+    <string name="discover_heading">Handy ads Grät ha</string>
+    <string name="discover_desc">Lueg, dass ds xOTP-Grät im Konfigurationsmodus isch.</string>
     <string name="tap_load_title">Slot lade</string>
-    <string name="tap_load_heading">Handy zum Lade as Grät ha</string>
-    <string name="tap_load_desc">Häb ds Handy as Grät, für d Konfiguration vom Slot %1$d abzfrage (GET_SLOT).</string>
+    <string name="tap_load_heading">Handy zum Lade ads Grät ha</string>
+    <string name="tap_load_desc">Häb ds Handy ads Grät, für d Konfiguration vom Slot %1$d ds lade.</string>
     <string name="tap_apply_title">Änderige übernäh</string>
-    <string name="tap_apply_heading">Schrybe mit Aatippe bestätige</string>
+    <string name="tap_apply_heading">Schribe mit Aatippe bestätige</string>
     <plurals name="tap_apply_desc">
-        <item quantity="one">Häb ds Handy as Grät, für %d gänderete Wärt z übertrage u uszfüehre (SET_SLOT / SET_GLOBAL).</item>
-        <item quantity="other">Häb ds Handy as Grät, für %d gänderti Wärt z übertrage u uszfüehre (SET_SLOT / SET_GLOBAL).</item>
+        <item quantity="one">Häb ds Handy ads Grät, für %d gänderete Wärt z übertrage u uszfüehre.</item>
+        <item quantity="other">Häb ds Handy ads Grät, für %d gänderti Wärte z übertrage u uszfüehre.</item>
     </plurals>
-    <string name="tap_setup_desc">Häb ds Handy as Grät, für di ganzi Konfiguration vom Slot %1$d z schrybe (SET_SLOT).</string>
+    <string name="tap_setup_desc">Häb ds Handy ads Grät, für di ganzi Konfiguration vom Slot %1$d z schrybe.</string>
     <string name="tap_global_title">Global übernäh</string>
     <string name="tap_global_heading">Globali Änderige übernäh</string>
     <plurals name="tap_global_desc">
-        <item quantity="one">Tipp ds Grät aa, für %d gänderete globale Parameter z übernäh (SET_GLOBAL).</item>
-        <item quantity="other">Tipp ds Grät aa, für %d gänderti globali Parameter z übernäh (SET_GLOBAL).</item>
+        <item quantity="one">Tipp ds Grät aa, für %d gänderete globale Parameter z übernäh.</item>
+        <item quantity="other">Tipp ds Grät aa, für %d gänderti globali Parameter z übernäh.</item>
     </plurals>
-    <string name="tap_generic_desc">Häb ds Handy as Grät.</string>
+    <string name="tap_generic_desc">Häb ds Handy ads Grät.</string>
 
     <!-- NFC status -->
-    <string name="nfc_disabled_title">NFC isch usgschaute</string>
-    <string name="nfc_disabled_desc">Schaut NFC y, für mit em Grät z kommuniziere.</string>
-    <string name="nfc_unsupported_title">NFC wird nid ungerstützt</string>
-    <string name="nfc_unsupported_desc">Das Handy het kei NFC-Hardware.</string>
+    <string name="nfc_disabled_title">NFC isch usgschalte</string>
+    <string name="nfc_disabled_desc">Schalt NFC y, für mit em Grät z kommuniziere.</string>
+    <string name="nfc_unsupported_title">NFC wird nid understützt</string>
+    <string name="nfc_unsupported_desc">Dis Handy het ke NFC-Hardware.</string>
 
     <!-- Failures -->
-    <string name="failure_write_title">Schrybe fählgschlage</string>
+    <string name="failure_write_title">Schribe fählgschlage</string>
     <string name="failure_load_slot_title">Slot het sech nid lah lade</string>
     <string name="failure_load_slot_message">Slot %1$d het sech nid lah läse. %2$s</string>
-    <string name="failure_slot_write_title">Slot-Schrybe fählgschlage</string>
-    <string name="failure_slot_write_message">D Slot-Konfiguration het sech nid lah schrybe. %1$s</string>
+    <string name="failure_slot_write_title">Slot-Schribe fählgschlage</string>
+    <string name="failure_slot_write_message">D Slot-Konfiguration het sech nid lah schribe. %1$s</string>
     <string name="failure_global_write_message">D globali Konfiguration het sech nid lah übernäh. %1$s</string>
-    <string name="mismatch_heading">Grät isch bim Schrybe gwächslet worde</string>
-    <string name="mismatch_desc">D Seriennummere vom NFC-Chip stimmt nümm mit em gscannte Grät übery. Zum Schutz vor em Schrybe uf ds fautsche Grät isch dr Vorgang abbroche worde u es si keni Date gänderet worde.</string>
+    <string name="mismatch_heading">Ds Grät isch bim Schrybe gwächslet worde</string>
+    <string name="mismatch_desc">D Seriennummere vom NFC-Chip stimmt nümm mit em gscannte Grät überi. Zum Schutz vor em Schribe uf ds lätze Grät isch dr Vorgang abbroche worde u es si keni Date gänderet worde.</string>
     <string name="mismatch_expected">Erwarteti Seriennummere</string>
-    <string name="mismatch_detected">Erkannti Seriennummere</string>
+    <string name="mismatch_detected">Erkennti Seriennummere</string>
 
     <!-- Overview -->
     <string name="overview_title">Verfüegbari Slots</string>
-    <string name="overview_device_info">Grätinformatione</string>
+    <string name="overview_device_info">Gräteinfos</string>
     <string name="overview_active_slot">Aktive Slot</string>
     <string name="overview_loading_names">Slot-Näme wärde glade…</string>
     <string name="overview_load_failed_title">Slot-Näme hei sech nid lah lade</string>
-    <string name="overview_load_failed_desc">Häb ds Handy no einisch as Grät, für\'s nomau z probiere.</string>
-    <string name="overview_slots_range">Slots %1$d–%2$d</string>
-    <string name="overview_tap_to_load">Häb ds Handy as Grät, für d Slot-Näme z lade.</string>
+    <string name="overview_load_failed_desc">Häb ds Handy no einisch ads Grät, für\'s nomau z probiere.</string>
+    <string name="overview_slots_range">Slots %1$d-%2$d</string>
+    <string name="overview_tap_to_load">Häb ds Handy ads Grät, für d Slot-Näme z lade.</string>
     <string name="slot_number">Slot %1$d</string>
     <string name="slot_number_named">Slot %1$d · %2$s</string>
     <string name="slot_active_badge">AKTIV</string>
     <string name="slot_status_configured">Konfiguriert</string>
     <string name="slot_status_empty">Läär</string>
-    <string name="page_previous">Vorderi Syte</string>
-    <string name="page_next">Nächschti Syte</string>
-    <string name="pagination">Slots %1$d–%2$d vo %3$d</string>
+    <string name="page_previous">Vorderi Site</string>
+    <string name="page_next">Nächschti Site</string>
+    <string name="pagination">Slots %1$d-%2$d vo %3$d</string>
 
     <!-- Slot details and setup -->
     <string name="slot_details_title">Slot-Details</string>
@@ -88,27 +88,27 @@
     <string name="slot_make_active">Als aktive Slot setze</string>
     <string name="slot_make_active_pending">• Wird als aktive Slot gsetzt (rückgängig)</string>
     <string name="slot_new_secret">Nöis Secret gsetzt</string>
-    <string name="setup_title">Slot %1$d yrichte</string>
-    <string name="setup_scan_qr">QR-Code scanne zum Usfüue</string>
-    <string name="setup_coming_soon">Chunnt bau</string>
-    <string name="setup_apply">Zum Übernäh aatippe</string>
-    <string name="setup_apply_note">Fürs Schrybe bruucht\'s e physische NFC-Kontakt.</string>
+    <string name="setup_title">Slot %1$d irichte</string>
+    <string name="setup_scan_qr">QR-Code scanne zum Usfülle</string>
+    <string name="setup_coming_soon">Chunnt gli</string>
+    <string name="setup_apply">Zum Übernäh ahtippe</string>
+    <string name="setup_apply_note">Fürds Schribe bruucht\'s ä physische NFC-Kontakt.</string>
 
     <!-- Fields -->
     <string name="field_slot_name">Slot-Name</string>
     <string name="field_algorithm">Algorithmus</string>
     <string name="field_digits">Codelängi</string>
-    <string name="field_interval">Intervau</string>
+    <string name="field_interval">Intervall</string>
     <string name="field_currency">Währig</string>
     <string name="field_fraction">Bruchteil</string>
     <string name="field_merchant_template">Händlervorlag</string>
-    <string name="field_secret">Geheime Schlüssu</string>
+    <string name="field_secret">Gheime Schlüssu</string>
     <string name="field_device_id">Grät-ID</string>
     <string name="field_merchant_backend">Händler-Backend</string>
-    <string name="field_device_description">Grätbeschrybig</string>
+    <string name="field_device_description">Grätebeschribig</string>
     <string name="hint_max_bytes">Bis %1$d Bytes.</string>
-    <string name="hint_digits">Erlaubte Bereich: %1$d–%2$d Stelle</string>
-    <string name="hint_interval">Erlaubte Bereich: %1$d–%2$d Sekunde</string>
+    <string name="hint_digits">Erloubte Bereich: %1$d-%2$d Stelle</string>
+    <string name="hint_interval">Erloubte Bereich: %1$d-%2$d Sekunde</string>
     <string name="hint_currency">Bis %1$d Bytes, z. B. KUDOS.</string>
     <string name="hint_fraction">Zähnerpotänz bis %1$d, z. B. 100 für Rappe.</string>
     <string name="hint_secret">Base32-codiert, bis %1$d Bytes. Cha nume gschribe wärde.</string>
@@ -124,26 +124,26 @@
 
     <!-- Validation -->
     <string name="error_unknown_algorithm">Unbekannte Algorithmus</string>
-    <string name="error_fraction">Mues e Zähnerpotänz zwüsche 1 u %1$d sy</string>
+    <string name="error_fraction">Mues e Zähnerpotänz zwüsche 1 u %1$d si</string>
     <string name="error_base32">Kes gültigs Base32</string>
     <string name="error_secret_empty">Ds Secret darf nid läär sy</string>
     <string name="error_secret_too_long">Ds Secret isch länger aus %1$d Bytes</string>
     <string name="error_not_empty">Darf nid läär sy</string>
     <string name="error_invalid_chars">Het ungültigi Zeiche drin</string>
-    <string name="error_max_bytes">Höchschtens %1$d Bytes erlaubt</string>
-    <string name="error_range">Erlaubte Bereich: %1$d–%2$d</string>
+    <string name="error_max_bytes">Höchschtens %1$d Bytes erloubt</string>
+    <string name="error_range">Erloubte Bereich: %1$d-%2$d</string>
     <string name="error_no_slot">Kei Slot glade</string>
 
     <!-- Communication errors -->
-    <string name="error_timeout">Ds Grät het nid rächtzytig gantwortet. Häb ds Handy as Grät u probier\'s no einisch.</string>
+    <string name="error_timeout">Ds Grät het nid rächtzytig gantwortet. Häb ds Handy ads Grät u probier\'s no einisch.</string>
     <string name="error_tag_lost">D Verbindig zum Grät isch abbroche. Häb ds Handy ruehig, solang\'s kommuniziert.</string>
     <string name="error_unsupported_tag">Dä NFC-Tag isch kes ungerstützts Grät.</string>
-    <string name="error_checksum">D Antwort vom Grät isch beschädiget gsi (Prüefsumme fautsch).</string>
+    <string name="error_checksum">D Antwort vom Grät isch beschädiget gsi (Prüefsumme faltsch).</string>
     <string name="error_malformed">Ungültigi Antwort vom Grät: %1$s</string>
-    <string name="status_version_mismatch">Protokollversion passt nid (Grät ungerstützt v%1$d, App bruucht v%2$d)</string>
+    <string name="status_version_mismatch">Protokollversion passt nid (Grät ungerstützt v%1$d,d App bruucht v%2$d)</string>
     <string name="status_invalid_length">Ungültigi Nutzdatelängi</string>
     <string name="status_checksum">Ds Grät het d Paket-Prüefsumme zrüggwise</string>
-    <string name="status_unsupported_cmd">Dä Befähl wird vom Grät nid ungerstützt</string>
+    <string name="status_unsupported_cmd">Dä Befähl wird vom Grät nid understützt</string>
     <string name="status_invalid_slot">Dä Slot git\'s nid</string>
     <string name="status_invalid_param">Unbekannte Parameter</string>
     <string name="status_invalid_value">Ds Grät het dr Wärt zrüggwise</string>
@@ -159,7 +159,7 @@
     <string name="msg_template_loaded">«%1$s» glade</string>
 
     <!-- Settings -->
-    <string name="settings_title">Ystellige</string>
+    <string name="settings_title">Istellige</string>
     <string name="settings_saved_configs">Gspichereti Konfiguratione</string>
     <string name="settings_debug">Debug-Konsole</string>
     <string name="settings_theme">Design (%1$s)</string>
@@ -171,9 +171,9 @@
     <string name="settings_language_dialog">Sprach uswähle</string>
     <string name="settings_about">Über d App</string>
     <string name="about_version">Version %1$s</string>
-    <string name="about_license_notice">Das Programm isch freii Software: Si chönd s under de Bedingige vo de GNU General Public License, wie si vo de Free Software Foundation veröffentlicht worde isch, wiitergäh und/oder verändere, entweder nach Version 3 vo de Lizänz oder (nach Ihrere Wahl) jedere spötere Version.\n\nDas Programm wird OHNI JEGLICHI GARANTIE bereitgstellt, nöd emal mit de implizite Garantie vo de MARCHTFÄHIGKEIT oder de EIGNIG FÜR ES BESTIMMTS ZWÄCK.</string>
-    <string name="about_view_license">Lizänz aazeige</string>
-    <string name="language_system">Wie ds System</string>
+    <string name="about_license_notice">Ds Programm isch freii Software: Ihr chöits under de Bedingige vo dr GNU General Public License, wie si vo dr Free Software Foundation veröffentlicht worde isch, wiitergäh u/odr verändere, entweder nach Version 3 vo dr Lizänz oder (nach Ihrerä Wahl) jedere spätere Version.\n\nDs Programm wird OHNI JEGLICHI GARANTIE breitgstellt, nid ämau mit dr implizite Garantie vo de MARKTFÄHIGKEIT oder dr EIGNIG FÜR Ä BESTIMMTE ZWÄCK.</string>
+    <string name="about_view_license">Lizänz ahzeige</string>
+    <string name="language_system">System</string>
     <string name="language_english">Änglisch</string>
     <string name="language_german">Hochdütsch</string>
     <string name="language_swiss_german">Bärndütsch</string>
@@ -181,7 +181,7 @@
 
     <!-- Templates -->
     <string name="templates_title">Gspichereti Vorlage</string>
-    <string name="templates_empty">No keni Vorlage gspicheret. Bruuch «Vorlag spichere» uf em Grät- oder Slot-Bildschirm.</string>
+    <string name="templates_empty">No keni Vorlage gspicheret. Bruuch «Vorlag spichere» ufem Grät- oder Slot-Bildschirm.</string>
     <string name="template_delete_description">%1$s lösche</string>
     <string name="template_delete_title">Vorlag lösche?</string>
     <string name="template_delete_message">«%1$s» wird uf däm Handy glöscht.</string>
@@ -194,13 +194,13 @@
     <string name="debug_command">Befähl</string>
     <string name="debug_request_preview">Aafrag-Vorschou</string>
     <string name="debug_tap_send">Tipp ds Grät aa, für d Aafrag z schicke</string>
-    <string name="debug_tap_read">Tipp ds Grät aa, für dr aktuell NDEF-Ytrag z läse</string>
-    <string name="debug_send">Bim nächschte Aatippe schicke</string>
-    <string name="debug_read">Nume Tag läse</string>
+    <string name="debug_tap_read">Tipp ds Grät aa, für dr aktuell NDEF-Itrag z läse</string>
+    <string name="debug_send">Bim nächschte Ahtippe schicke</string>
+    <string name="debug_read">Numä Tag läse</string>
     <string name="debug_log">Protokoll (%1$d)</string>
-    <string name="debug_edit_raw">Rohpaket bearbeite (Hex)</string>
-    <string name="debug_packet">Paket</string>
-    <string name="debug_packet_hint">Ganzes Paket inkl. Prüefsumme, z. B. %1$s</string>
+    <string name="debug_edit_raw">Rohdatepäckli bearbeite (Hex)</string>
+    <string name="debug_packet">Päckli</string>
+    <string name="debug_packet_hint">Ganzes Päckli inkl. Prüefsumme, z. B. %1$s</string>
     <string name="debug_operation">Operation</string>
     <string name="debug_start_slot">Start-Slot</string>
     <string name="debug_slot_id">Slot-ID</string>
@@ -209,16 +209,16 @@
     <string name="debug_typed">Typisierte Wärt</string>
     <string name="debug_hex">Hex-Bytes</string>
     <string name="debug_payload">Nutzdate</string>
-    <string name="debug_hide_advanced">Erwyteret usblände</string>
-    <string name="debug_show_advanced">Erwyteret: Version, Prüefsumme</string>
-    <string name="debug_version">Protokollversion (0–15)</string>
+    <string name="debug_hide_advanced">Erwiteret usblände</string>
+    <string name="debug_show_advanced">Erwiteret: Version, Prüefsumme</string>
+    <string name="debug_version">Protokollversion (0-15)</string>
     <string name="debug_auto_checksum">Automatischi XOR-Prüefsumme</string>
     <string name="debug_checksum_byte">Prüefsumme-Byte</string>
     <string name="debug_checksum_hint">Es Hex-Byte, z. B. FF, für ERR_CHECKSUM uszlöse</string>
     <string name="debug_request">Aafrag</string>
     <string name="debug_response">Antwort</string>
     <string name="debug_error">Fähler: %1$s</string>
-    <string name="debug_tag_content">Tag-Inhaut</string>
+    <string name="debug_tag_content">Tag-Inhalt</string>
     <string name="debug_hide_binary">Binär usblände</string>
-    <string name="debug_show_binary">Binär aazeige (%1$d B)</string>
+    <string name="debug_show_binary">Binär ahzeige (%1$d B)</string>
 </resources>
