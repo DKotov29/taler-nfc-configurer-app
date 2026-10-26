@@ -372,6 +372,24 @@ class NfcViewModel(
         }
     }
 
+    /** The app was opened or brought to front by tapping a device: starts over, unsaved edits are dropped. */
+    fun onLaunchedByDevice() {
+        handled = null
+        _uiState.update {
+            it.copy(
+                screen = Screen.Discover,
+                session = null,
+                globalEditor = null,
+                slotEditor = null,
+                setupDraft = null,
+                editing = null,
+                editError = null,
+                message = null,
+                debug = it.debug.copy(armed = null)
+            )
+        }
+    }
+
     fun onRetry() {
         handled = null
         _uiState.update { state ->

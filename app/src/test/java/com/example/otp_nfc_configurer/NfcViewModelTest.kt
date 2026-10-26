@@ -135,6 +135,25 @@ class NfcViewModelTest {
     }
 
     @Test
+    fun launchedByDevice_startsOverWithDiscovery() = test {
+        viewModel.onOpenDebug()
+        viewModel.onDebugArm(DebugTapMode.READ)
+        // App in the background: the launching tap arrives before reader mode is on again.
+        reader.state.value = ReaderState.Paused
+        viewModel.onLaunchedByDevice()
+        reader.tap()
+        advanceUntilIdle()
+        assertEquals(Screen.Discover, state.screen)
+        assertNull(state.debug.armed)
+        assertEquals(0, reader.runs.size)
+
+        reader.state.value = ReaderState.Active
+        advanceUntilIdle()
+        assertEquals(Screen.Overview, state.screen)
+        assertEquals(1, reader.runs.size)
+    }
+
+    @Test
     fun readerState_isShownAsNfcStatus() = test {
         reader.state.value = ReaderState.AdapterOff
         advanceUntilIdle()

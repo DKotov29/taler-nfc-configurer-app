@@ -22,12 +22,15 @@
 package com.example.otp_nfc_configurer
 
 import android.content.Intent
+import android.nfc.NfcAdapter
+import android.nfc.Tag
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.otp_nfc_configurer.nfc.NfcReader
 import com.example.otp_nfc_configurer.ui.ConfiguratorApp
@@ -43,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(NfcReader.get(this))
+        // Not on recreation (e.g. rotation): the tap that launched the app was already handled.
+        if (savedInstanceState == null) handleTagIntent(intent)
 
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,6 +55,23 @@ class MainActivity : AppCompatActivity() {
                 ConfiguratorApp(viewModel = viewModel, onEnableNfc = ::openNfcSettings)
             }
         }
+    }
+
+    /** Tap on a device while the app is in the background (launchMode singleTop). */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleTagIntent(intent)
+    }
+
+    /** The app was opened by tapping a device in configuration mode, see the NDEF filters in the manifest. */
+    private fun handleTagIntent(intent: Intent?) {
+        if (intent?.action != NfcAdapter.ACTION_NDEF_DISCOVERED) return
+        val tag = IntentCompat.getParcelableExtra(intent, NfcAdapter.EXTRA_TAG, Tag::class.java) ?: return
+        viewModel.onLaunchedByDevice()
+        // Runs discovery once reader mode is on; if this handle is already stale by then,
+        // reader mode delivers the same tag again.
+        NfcReader.get(this).offer(tag)
     }
 
     private fun openNfcSettings() {
