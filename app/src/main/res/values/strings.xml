@@ -29,19 +29,19 @@
     <string name="discover_desc">Ensure the merchant device is switched to configuration mode.</string>
     <string name="tap_load_title">Load Slot</string>
     <string name="tap_load_heading">Tap Phone to Load Slot</string>
-    <string name="tap_load_desc">Hold your phone near the device to fetch the configuration of slot %1$d (GET_SLOT).</string>
+    <string name="tap_load_desc">Hold your phone near the device to fetch the configuration of slot %1$d.</string>
     <string name="tap_apply_title">Apply Changes</string>
     <string name="tap_apply_heading">Tap to Confirm Write</string>
     <plurals name="tap_apply_desc">
-        <item quantity="one">Hold your phone near the device to transmit and execute %d changed value (SET_SLOT / SET_GLOBAL).</item>
-        <item quantity="other">Hold your phone near the device to transmit and execute %d changed values (SET_SLOT / SET_GLOBAL).</item>
+        <item quantity="one">Hold your phone near the device to transmit and execute %d changed value.</item>
+        <item quantity="other">Hold your phone near the device to transmit and execute %d changed values.</item>
     </plurals>
-    <string name="tap_setup_desc">Hold your phone near the device to write the complete configuration of slot %1$d (SET_SLOT).</string>
+    <string name="tap_setup_desc">Hold your phone near the device to write the complete configuration of slot %1$d.</string>
     <string name="tap_global_title">Global Apply</string>
     <string name="tap_global_heading">Apply Global Changes</string>
     <plurals name="tap_global_desc">
-        <item quantity="one">Tap device to apply %d changed global parameter (SET_GLOBAL).</item>
-        <item quantity="other">Tap device to apply %d changed global parameters (SET_GLOBAL).</item>
+        <item quantity="one">Tap device to apply %d changed global parameter.</item>
+        <item quantity="other">Tap device to apply %d changed global parameters.</item>
     </plurals>
     <string name="tap_generic_desc">Hold your phone near the device.</string>
 
@@ -157,6 +157,9 @@
     <string name="msg_debug_error">Debug: %1$s</string>
     <string name="msg_template_saved">Saved \"%1$s\"</string>
     <string name="msg_template_loaded">Loaded \"%1$s\"</string>
+    <string name="msg_template_updated">Updated \"%1$s\"</string>
+    <string name="msg_template_unchanged">\"%1$s\" already contains these values</string>
+    <string name="msg_template_fix_fields">Fix the highlighted fields before saving a template</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -190,6 +193,29 @@
     <string name="template_none_matching">No matching templates saved.</string>
     <string name="template_kind_slot">Slot configuration</string>
     <string name="template_kind_global">Device configuration</string>
+    <string name="template_name_taken">A template with this name already exists</string>
+    <string name="template_rename">Rename Template</string>
+    <string name="template_delete">Delete Template</string>
+    <string name="template_save_changes">Save Changes (%1$d)</string>
+    <string name="template_no_changes">No Changes to Save</string>
+    <string name="template_save_new">New template</string>
+    <string name="template_create">Create</string>
+    <string name="template_save_existing">Save into existing</string>
+    <string name="template_identical">Same values</string>
+    <plurals name="template_differences">
+        <item quantity="one">%d different value</item>
+        <item quantity="other">%d different values</item>
+    </plurals>
+    <string name="template_merge_title">Save into \"%1$s\"</string>
+    <string name="template_merge_hint">Choose which value the template keeps for each field that differs.</string>
+    <string name="template_merge_current">Current</string>
+    <string name="template_merge_stored">In template</string>
+    <string name="template_merge_custom">Custom</string>
+    <plurals name="template_merge_identical">
+        <item quantity="one">%d more field is identical.</item>
+        <item quantity="other">%d more fields are identical.</item>
+    </plurals>
+    <string name="template_save_into">Save into \"%1$s\"</string>
 
     <!-- Debug console (protocol details stay in English) -->
     <string name="debug_command">Command</string>

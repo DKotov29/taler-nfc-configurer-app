@@ -367,6 +367,13 @@ class NfcViewModel(
                 is Screen.DeviceMismatch -> state.copy(screen = returnTarget(screen.retry))
                 Screen.Settings -> state.copy(screen = if (state.session != null) Screen.Overview else Screen.Discover)
                 Screen.SavedConfigs -> state.copy(screen = Screen.Settings)
+                Screen.TemplateDetails -> state.copy(screen = Screen.SavedConfigs, templateEditor = null, editing = null)
+                // Merge step goes back to choosing the target, the first step back to where saving started.
+                Screen.SaveTemplate -> when (val save = state.templateSave) {
+                    null -> state.copy(screen = Screen.Settings)
+                    else -> if (save.target != null) state.copy(templateSave = save.copy(target = null, choices = emptyMap()))
+                    else state.copy(screen = save.returnTo, templateSave = null)
+                }
                 Screen.Debug -> state.copy(screen = Screen.Settings, debug = state.debug.copy(armed = null))
             }
         }
@@ -384,6 +391,8 @@ class NfcViewModel(
                 setupDraft = null,
                 editing = null,
                 editError = null,
+                templateEditor = null,
+                templateSave = null,
                 message = null,
                 debug = it.debug.copy(armed = null)
             )
@@ -470,7 +479,8 @@ class NfcViewModel(
 
     fun onSaveEdit(input: String) {
         val state = _uiState.value
-        val error: UiText? = when (val target = state.editing) {
+        val target = state.editing ?: return
+        val error: UiText? = if (state.screen == Screen.TemplateDetails) editTemplateField(target, input) else when (target) {
             is EditTarget.Slot -> editSlotField(target.field, input)
             is EditTarget.Global -> {
                 val editor = state.globalEditor ?: return
@@ -482,7 +492,6 @@ class NfcViewModel(
                     is FieldInput.Invalid -> result.reason
                 }
             }
-            null -> return
         }
         _uiState.update { if (error == null) it.copy(editing = null, editError = null) else it.copy(editError = error) }
     }
@@ -518,6 +527,18 @@ class NfcViewModel(
 
     /** Validates the setup form; stores field errors and returns null if invalid. */
     private fun validateSetup(draft: SetupDraft): Pair<SlotConfig, ByteArray>? {
+        val (config, fieldErrors) = parseSetupFields(draft)
+        val errors = fieldErrors.toMutableMap()
+        val secret = when (val result = SlotField.parseSecret(draft.values[SlotField.SECRET].orEmpty())) {
+            is FieldInput.Valid -> result.value
+            is FieldInput.Invalid -> { errors[SlotField.SECRET] = result.reason; null }
+        }
+        _uiState.update { it.copy(setupDraft = it.setupDraft?.copy(errors = errors)) }
+        return if (errors.isEmpty() && secret != null) config to secret else null
+    }
+
+    /** Parses the readable (non-secret) fields of the setup form, with the errors of invalid ones. */
+    private fun parseSetupFields(draft: SetupDraft): Pair<SlotConfig, Map<SlotField, UiText>> {
         val errors = mutableMapOf<SlotField, UiText>()
         var config = EMPTY_SLOT
         for (field in SlotField.readable) {
@@ -526,12 +547,7 @@ class NfcViewModel(
                 is FieldInput.Invalid -> errors[field] = result.reason
             }
         }
-        val secret = when (val result = SlotField.parseSecret(draft.values[SlotField.SECRET].orEmpty())) {
-            is FieldInput.Valid -> result.value
-            is FieldInput.Invalid -> { errors[SlotField.SECRET] = result.reason; null }
-        }
-        _uiState.update { it.copy(setupDraft = it.setupDraft?.copy(errors = errors)) }
-        return if (errors.isEmpty() && secret != null) config to secret else null
+        return config to errors
     }
 
     private fun defaultSetupDraft(index: Int) = SetupDraft(
@@ -550,24 +566,114 @@ class NfcViewModel(
 
     // ---------- Saved configurations ("templates") ----------
 
-    fun onSaveTemplate(name: String) {
+    /** Starts the "Save Template" flow with the values of the current screen. */
+    fun onSaveTemplate() {
         val state = _uiState.value
-        val config = when (state.screen) {
+        val values = when (state.screen) {
             is Screen.SlotDetails -> state.slotEditor?.draft?.let { draft ->
-                SavedConfig(name, SavedConfigKind.SLOT, SlotField.readable.associate { it.name to it.raw(draft) })
+                SlotField.readable.associate { it.name to it.raw(draft) }
             }
             is Screen.SetupSlot -> state.setupDraft?.let { draft ->
-                SavedConfig(name, SavedConfigKind.SLOT, SlotField.readable.associate { it.name to draft.values[it].orEmpty() })
+                val (config, errors) = parseSetupFields(draft)
+                if (errors.isNotEmpty()) {
+                    _uiState.update {
+                        it.copy(setupDraft = draft.copy(errors = errors), message = uiText(R.string.msg_template_fix_fields))
+                    }
+                    return
+                }
+                SlotField.readable.associate { it.name to it.raw(config) }
             }
             Screen.Overview -> state.globalEditor?.draft?.let { draft ->
-                // The device ID identifies a single device and is therefore not part of a template.
-                SavedConfig(name, SavedConfigKind.GLOBAL, GLOBAL_TEMPLATE_FIELDS.associate { it.name to it.raw(draft) })
+                SavedConfigKind.GLOBAL.fields.filterIsInstance<EditTarget.Global>().associate { it.key to it.field.raw(draft) }
             }
             else -> null
         } ?: return
-        savedConfigRepository.save(config)
-        _uiState.update { it.copy(message = uiText(R.string.msg_template_saved, name)) }
+        val kind = if (state.screen == Screen.Overview) SavedConfigKind.GLOBAL else SavedConfigKind.SLOT
+        _uiState.update {
+            it.copy(screen = Screen.SaveTemplate, templateSave = TemplateSave(kind, values, returnTo = state.screen))
+        }
     }
+
+    fun onSaveAsNewTemplate(name: String) {
+        val save = _uiState.value.templateSave ?: return
+        if (templateNameError(name, templateNames(save.kind)) != null) return
+        savedConfigRepository.save(SavedConfig(name.trim(), save.kind, save.values))
+        finishTemplateSave(uiText(R.string.msg_template_saved, name.trim()))
+    }
+
+    /** Opens the merge step for [target]; nothing to merge if it already holds the same values. */
+    fun onSelectMergeTarget(target: SavedConfig) {
+        val save = _uiState.value.templateSave?.copy(target = target) ?: return
+        val differing = save.differing
+        if (differing.isEmpty()) {
+            finishTemplateSave(uiText(R.string.msg_template_unchanged, target.name))
+            return
+        }
+        val choices = differing.associate { it.key to MergeChoice(custom = save.values[it.key].orEmpty()) }
+        _uiState.update { it.copy(templateSave = save.copy(choices = choices)) }
+    }
+
+    fun onMergeChoiceChange(field: EditTarget, choice: MergeChoice) = updateTemplateSave {
+        it.copy(choices = it.choices + (field.key to choice.copy(error = null)))
+    }
+
+    /** Writes the chosen values into the merge target; custom values must be valid. */
+    fun onConfirmMerge() {
+        val save = _uiState.value.templateSave ?: return
+        val target = save.target ?: return
+        val (merged, errors) = save.merge()
+        if (errors.isNotEmpty()) {
+            updateTemplateSave { it.copy(choices = it.choices.mapValues { (key, choice) -> choice.copy(error = errors[key]) }) }
+            return
+        }
+        savedConfigRepository.save(target.copy(values = merged))
+        finishTemplateSave(uiText(R.string.msg_template_updated, target.name))
+    }
+
+    private fun finishTemplateSave(message: UiText) = _uiState.update { state ->
+        state.copy(screen = state.templateSave?.returnTo ?: state.screen, templateSave = null, message = message)
+    }
+
+    fun templateNames(kind: SavedConfigKind): List<String> =
+        _uiState.value.savedConfigs.filter { it.kind == kind }.map { it.name }
+
+    fun onOpenTemplate(config: SavedConfig) = _uiState.update {
+        it.copy(screen = Screen.TemplateDetails, templateEditor = TemplateEditor(original = config, draft = config))
+    }
+
+    fun onRenameTemplate(name: String) {
+        val editor = _uiState.value.templateEditor ?: return
+        if (templateNameError(name, templateNames(editor.draft.kind) - editor.original.name) != null) return
+        updateTemplateEditor { it.copy(draft = it.draft.copy(name = name.trim())) }
+    }
+
+    fun onResetTemplate() = updateTemplateEditor { it.copy(draft = it.original) }
+
+    fun onSaveTemplateChanges() {
+        val editor = _uiState.value.templateEditor?.takeIf { it.changeCount > 0 } ?: return
+        savedConfigRepository.replace(editor.original, editor.draft)
+        _uiState.update {
+            it.copy(
+                templateEditor = editor.copy(original = editor.draft),
+                message = uiText(R.string.msg_template_updated, editor.draft.name)
+            )
+        }
+    }
+
+    fun onDeleteOpenTemplate() {
+        val editor = _uiState.value.templateEditor ?: return
+        savedConfigRepository.delete(editor.original)
+        _uiState.update { it.copy(screen = Screen.SavedConfigs, templateEditor = null) }
+    }
+
+    private fun editTemplateField(target: EditTarget, input: String): UiText? =
+        when (val result = target.normalize(input)) {
+            is FieldInput.Valid -> {
+                updateTemplateEditor { it.copy(draft = it.draft.copy(values = it.draft.values + (target.key to result.value))) }
+                null
+            }
+            is FieldInput.Invalid -> result.reason
+        }
 
     fun onLoadTemplate(config: SavedConfig) {
         _uiState.update { state ->
@@ -581,7 +687,7 @@ class NfcViewModel(
                 })
                 Screen.Overview -> state.copy(globalEditor = state.globalEditor?.let { editor ->
                     var draft = editor.draft
-                    for (field in GLOBAL_TEMPLATE_FIELDS) {
+                    for (field in SavedConfigKind.GLOBAL.fields.filterIsInstance<EditTarget.Global>().map { it.field }) {
                         val value = config.values[field.name] ?: continue
                         (field.apply(draft, value) as? FieldInput.Valid)?.let { draft = it.value }
                     }
@@ -662,13 +768,17 @@ class NfcViewModel(
     private fun updateSlotEditor(transform: (SlotEditor) -> SlotEditor) =
         _uiState.update { state -> state.copy(slotEditor = state.slotEditor?.let(transform)) }
 
+    private fun updateTemplateEditor(transform: (TemplateEditor) -> TemplateEditor) =
+        _uiState.update { state -> state.copy(templateEditor = state.templateEditor?.let(transform)) }
+
+    private fun updateTemplateSave(transform: (TemplateSave) -> TemplateSave) =
+        _uiState.update { state -> state.copy(templateSave = state.templateSave?.let(transform)) }
+
     companion object {
         /** ALG_NONE in crypto_algorithms: slot not configured. */
         private const val ALG_NONE = 0
 
         private const val DEBUG_LOG_SIZE = 50
-
-        private val GLOBAL_TEMPLATE_FIELDS = listOf(GlobalField.MERCHANT_BACKEND, GlobalField.DEVICE_DESCRIPTION)
 
         private val EMPTY_SLOT = SlotConfig(
             interval = 30, digits = 8, algorithm = Algorithm.XTOTP_SHA1.code,

@@ -226,7 +226,12 @@ private fun SettingsEntry(title: String, onClick: () -> Unit, modifier: Modifier
 
 /** 8. Template List */
 @Composable
-fun SavedConfigsScreen(configs: List<SavedConfig>, onBack: () -> Unit, onDelete: (SavedConfig) -> Unit) {
+fun SavedConfigsScreen(
+    configs: List<SavedConfig>,
+    onBack: () -> Unit,
+    onOpen: (SavedConfig) -> Unit,
+    onDelete: (SavedConfig) -> Unit
+) {
     var pendingDelete by rememberSaveable { mutableStateOf<String?>(null) }
     FullScreen {
         AppTopBar(title = stringResource(R.string.templates_title), onBack = onBack)
@@ -240,7 +245,13 @@ fun SavedConfigsScreen(configs: List<SavedConfig>, onBack: () -> Unit, onDelete:
         }
         LazyColumn(Modifier.padding(horizontal = 16.dp)) {
             items(configs, key = { "${it.kind}:${it.name}" }) { config ->
-                Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onOpen(config) }
+                        .padding(vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Column(Modifier.weight(1f)) {
                         Text(config.name, fontSize = 15.sp, color = TextPrimary)
                         Text(stringResource(kindLabel(config.kind)), fontSize = 12.sp, color = TextSecondary)
@@ -265,22 +276,6 @@ fun SavedConfigsScreen(configs: List<SavedConfig>, onBack: () -> Unit, onDelete:
             dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text(stringResource(R.string.action_cancel)) } }
         )
     }
-}
-
-@Composable
-fun SaveTemplateDialog(onDismiss: () -> Unit, onSave: (String) -> Unit) {
-    var name by rememberSaveable { mutableStateOf("") }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.template_save)) },
-        text = {
-            OutlinedTextField(value = name, onValueChange = { name = it }, singleLine = true, label = { Text(stringResource(R.string.template_name)) })
-        },
-        confirmButton = {
-            TextButton(onClick = { onSave(name.trim()) }, enabled = name.isNotBlank()) { Text(stringResource(R.string.action_save)) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } }
-    )
 }
 
 @Composable
@@ -309,9 +304,4 @@ fun LoadTemplateDialog(configs: List<SavedConfig>, onDismiss: () -> Unit, onLoad
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_close)) } }
     )
-}
-
-private fun kindLabel(kind: SavedConfigKind) = when (kind) {
-    SavedConfigKind.SLOT -> R.string.template_kind_slot
-    SavedConfigKind.GLOBAL -> R.string.template_kind_global
 }

@@ -275,7 +275,13 @@ fun TemplateButtons(onSave: () -> Unit, onLoad: () -> Unit) {
 
 /** Bottom "Apply Changes (n)" / "Reset Changes" block of states 3b and 2e. */
 @Composable
-fun ApplyChangesBar(changeCount: Int, onApply: () -> Unit, onReset: () -> Unit) {
+fun ApplyChangesBar(
+    changeCount: Int,
+    onApply: () -> Unit,
+    onReset: () -> Unit,
+    applyLabel: String = stringResource(R.string.apply_changes_count, changeCount),
+    noChangesLabel: String = stringResource(R.string.apply_no_changes)
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -283,8 +289,7 @@ fun ApplyChangesBar(changeCount: Int, onApply: () -> Unit, onReset: () -> Unit) 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PrimaryButton(
-            text = if (changeCount > 0) stringResource(R.string.apply_changes_count, changeCount)
-            else stringResource(R.string.apply_no_changes),
+            text = if (changeCount > 0) applyLabel else noChangesLabel,
             onClick = onApply,
             enabled = changeCount > 0
         )

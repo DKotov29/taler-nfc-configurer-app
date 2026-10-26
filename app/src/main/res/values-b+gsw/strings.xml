@@ -157,6 +157,9 @@
     <string name="msg_debug_error">Debug: %1$s</string>
     <string name="msg_template_saved">«%1$s» gspicheret</string>
     <string name="msg_template_loaded">«%1$s» glade</string>
+    <string name="msg_template_updated">«%1$s» aktualisiert</string>
+    <string name="msg_template_unchanged">«%1$s» het die Wärte scho</string>
+    <string name="msg_template_fix_fields">Korrigier di markierte Fälder, bevor du e Vorlag spicherisch</string>
 
     <!-- Settings -->
     <string name="settings_title">Istellige</string>
@@ -189,6 +192,29 @@
     <string name="template_none_matching">Keni passende Vorlage gspicheret.</string>
     <string name="template_kind_slot">Slot-Konfiguration</string>
     <string name="template_kind_global">Grätkonfiguration</string>
+    <string name="template_name_taken">E Vorlag mit däm Name git\'s scho</string>
+    <string name="template_rename">Vorlag umbenenne</string>
+    <string name="template_delete">Vorlag lösche</string>
+    <string name="template_save_changes">Änderige spichere (%1$d)</string>
+    <string name="template_no_changes">Kei Änderige zum Spichere</string>
+    <string name="template_save_new">Nöii Vorlag</string>
+    <string name="template_create">Erstelle</string>
+    <string name="template_save_existing">I bestehendi spichere</string>
+    <string name="template_identical">Glychi Wärte</string>
+    <plurals name="template_differences">
+        <item quantity="one">%d andere Wärt</item>
+        <item quantity="other">%d anderi Wärte</item>
+    </plurals>
+    <string name="template_merge_title">I «%1$s» spichere</string>
+    <string name="template_merge_hint">Wähl für jedes Fäld, wo sech ungerscheidet, weli Wärt i dr Vorlag blybt.</string>
+    <string name="template_merge_current">Aktuell</string>
+    <string name="template_merge_stored">I dr Vorlag</string>
+    <string name="template_merge_custom">Eigete Wärt</string>
+    <plurals name="template_merge_identical">
+        <item quantity="one">%d wytersch Fäld isch glych.</item>
+        <item quantity="other">%d wyteri Fälder si glych.</item>
+    </plurals>
+    <string name="template_save_into">I «%1$s» spichere</string>
 
     <!-- Debug console -->
     <string name="debug_command">Befähl</string>

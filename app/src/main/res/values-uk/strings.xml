@@ -27,23 +27,23 @@
     <string name="discover_desc">Переконайтеся, що пристрій продавця перебуває в режимі конфігурації.</string>
     <string name="tap_load_title">Завантаження слота</string>
     <string name="tap_load_heading">Прикладіть телефон, щоб завантажити слот</string>
-    <string name="tap_load_desc">Піднесіть телефон до пристрою, щоб отримати конфігурацію слота %1$d (GET_SLOT).</string>
+    <string name="tap_load_desc">Піднесіть телефон до пристрою, щоб отримати конфігурацію слота %1$d.</string>
     <string name="tap_apply_title">Застосування змін</string>
     <string name="tap_apply_heading">Дотик для підтвердження запису</string>
     <plurals name="tap_apply_desc">
-        <item quantity="one">Піднесіть телефон до пристрою, щоб передати й виконати %d змінене значення (SET_SLOT / SET_GLOBAL).</item>
-        <item quantity="few">Піднесіть телефон до пристрою, щоб передати й виконати %d змінені значення (SET_SLOT / SET_GLOBAL).</item>
-        <item quantity="many">Піднесіть телефон до пристрою, щоб передати й виконати %d змінених значень (SET_SLOT / SET_GLOBAL).</item>
-        <item quantity="other">Піднесіть телефон до пристрою, щоб передати й виконати %d зміненого значення (SET_SLOT / SET_GLOBAL).</item>
+        <item quantity="one">Піднесіть телефон до пристрою, щоб передати й виконати %d змінене значення.</item>
+        <item quantity="few">Піднесіть телефон до пристрою, щоб передати й виконати %d змінені значення.</item>
+        <item quantity="many">Піднесіть телефон до пристрою, щоб передати й виконати %d змінених значень.</item>
+        <item quantity="other">Піднесіть телефон до пристрою, щоб передати й виконати %d зміненого значення.</item>
     </plurals>
     <string name="tap_setup_desc">Піднесіть телефон до пристрою, щоб записати повну конфігурацію слота %1$d (SET_SLOT).</string>
     <string name="tap_global_title">Глобальне застосування</string>
     <string name="tap_global_heading">Застосувати глобальні зміни</string>
     <plurals name="tap_global_desc">
-        <item quantity="one">Торкніться пристрою, щоб застосувати %d змінений глобальний параметр (SET_GLOBAL).</item>
-        <item quantity="few">Торкніться пристрою, щоб застосувати %d змінені глобальні параметри (SET_GLOBAL).</item>
-        <item quantity="many">Торкніться пристрою, щоб застосувати %d змінених глобальних параметрів (SET_GLOBAL).</item>
-        <item quantity="other">Торкніться пристрою, щоб застосувати %d зміненого глобального параметра (SET_GLOBAL).</item>
+        <item quantity="one">Торкніться пристрою, щоб застосувати %d змінений глобальний параметр.</item>
+        <item quantity="few">Торкніться пристрою, щоб застосувати %d змінені глобальні параметри.</item>
+        <item quantity="many">Торкніться пристрою, щоб застосувати %d змінених глобальних параметрів.</item>
+        <item quantity="other">Торкніться пристрою, щоб застосувати %d зміненого глобального параметра.</item>
     </plurals>
     <string name="tap_generic_desc">Піднесіть телефон до пристрою.</string>
 
@@ -163,6 +163,9 @@
     <string name="msg_debug_error">Debug: %1$s</string>
     <string name="msg_template_saved">«%1$s» збережено</string>
     <string name="msg_template_loaded">«%1$s» завантажено</string>
+    <string name="msg_template_updated">«%1$s» оновлено</string>
+    <string name="msg_template_unchanged">«%1$s» вже містить ці значення</string>
+    <string name="msg_template_fix_fields">Виправте позначені поля, перш ніж зберігати шаблон</string>
 
     <!-- Settings -->
     <string name="settings_title">Налаштування</string>
@@ -195,6 +198,33 @@
     <string name="template_none_matching">Немає відповідних збережених шаблонів.</string>
     <string name="template_kind_slot">Конфігурація слота</string>
     <string name="template_kind_global">Конфігурація пристрою</string>
+    <string name="template_name_taken">Шаблон із такою назвою вже існує</string>
+    <string name="template_rename">Перейменувати шаблон</string>
+    <string name="template_delete">Видалити шаблон</string>
+    <string name="template_save_changes">Зберегти зміни (%1$d)</string>
+    <string name="template_no_changes">Немає змін для збереження</string>
+    <string name="template_save_new">Новий шаблон</string>
+    <string name="template_create">Створити</string>
+    <string name="template_save_existing">Зберегти в наявний</string>
+    <string name="template_identical">Ті самі значення</string>
+    <plurals name="template_differences">
+        <item quantity="one">%d значення відрізняється</item>
+        <item quantity="few">%d значення відрізняються</item>
+        <item quantity="many">%d значень відрізняються</item>
+        <item quantity="other">%d значення відрізняються</item>
+    </plurals>
+    <string name="template_merge_title">Зберегти в «%1$s»</string>
+    <string name="template_merge_hint">Для кожного поля, що відрізняється, оберіть, яке значення залишиться в шаблоні.</string>
+    <string name="template_merge_current">Поточне</string>
+    <string name="template_merge_stored">У шаблоні</string>
+    <string name="template_merge_custom">Власне</string>
+    <plurals name="template_merge_identical">
+        <item quantity="one">Ще %d поле збігається.</item>
+        <item quantity="few">Ще %d поля збігаються.</item>
+        <item quantity="many">Ще %d полів збігаються.</item>
+        <item quantity="other">Ще %d поля збігаються.</item>
+    </plurals>
+    <string name="template_save_into">Зберегти в «%1$s»</string>
 
     <!-- Debug console -->
     <string name="debug_command">Команда</string>

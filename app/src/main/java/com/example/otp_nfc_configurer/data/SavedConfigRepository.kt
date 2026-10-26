@@ -51,8 +51,13 @@ class SavedConfigRepository(private val prefs: SharedPreferences) {
         update(_configs.value.filterNot { it.name == config.name && it.kind == config.kind } + config)
     }
 
+    /** Replaces [old] by [new], which may have a different name. */
+    fun replace(old: SavedConfig, new: SavedConfig) {
+        update(_configs.value.filterNot { it.kind == new.kind && (it.name == old.name || it.name == new.name) } + new)
+    }
+
     fun delete(config: SavedConfig) {
-        update(_configs.value - config)
+        update(_configs.value.filterNot { it.name == config.name && it.kind == config.kind })
     }
 
     private fun update(configs: List<SavedConfig>) {

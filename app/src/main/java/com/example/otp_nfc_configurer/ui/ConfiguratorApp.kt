@@ -45,6 +45,7 @@ import com.example.otp_nfc_configurer.Screen
 import com.example.otp_nfc_configurer.TapAction
 import com.example.otp_nfc_configurer.data.LanguagePreferences
 import com.example.otp_nfc_configurer.data.SavedConfigKind
+import com.example.otp_nfc_configurer.key
 import com.example.otp_nfc_configurer.model.SlotField
 
 @Composable
@@ -70,7 +71,7 @@ fun ConfiguratorApp(viewModel: NfcViewModel, onEnableNfc: () -> Unit) {
 
 @Composable
 private fun ScreenContent(state: NfcUiState, viewModel: NfcViewModel, onEnableNfc: () -> Unit) {
-    var templateDialog by rememberSaveable { mutableStateOf<TemplateDialog?>(null) }
+    var loadingTemplate by rememberSaveable { mutableStateOf(false) }
 
     when (val screen = state.screen) {
         Screen.Discover -> DiscoverScreen(
@@ -91,8 +92,8 @@ private fun ScreenContent(state: NfcUiState, viewModel: NfcViewModel, onEnableNf
                 onPageChange = viewModel::onPageChange,
                 onApplyGlobal = viewModel::onApplyGlobal,
                 onResetGlobal = viewModel::onResetGlobal,
-                onSaveTemplate = { templateDialog = TemplateDialog.SAVE },
-                onLoadTemplate = { templateDialog = TemplateDialog.LOAD }
+                onSaveTemplate = viewModel::onSaveTemplate,
+                onLoadTemplate = { loadingTemplate = true }
             )
         }
 
@@ -105,8 +106,8 @@ private fun ScreenContent(state: NfcUiState, viewModel: NfcViewModel, onEnableNf
                 onToggleMakeActive = viewModel::onToggleMakeActive,
                 onApply = viewModel::onApplySlot,
                 onReset = viewModel::onResetSlot,
-                onSaveTemplate = { templateDialog = TemplateDialog.SAVE },
-                onLoadTemplate = { templateDialog = TemplateDialog.LOAD }
+                onSaveTemplate = viewModel::onSaveTemplate,
+                onLoadTemplate = { loadingTemplate = true }
             )
         }
 
@@ -116,8 +117,8 @@ private fun ScreenContent(state: NfcUiState, viewModel: NfcViewModel, onEnableNf
                 onBack = viewModel::onBack,
                 onValueChange = viewModel::onSetupValueChange,
                 onApply = viewModel::onApplySetup,
-                onSaveTemplate = { templateDialog = TemplateDialog.SAVE },
-                onLoadTemplate = { templateDialog = TemplateDialog.LOAD }
+                onSaveTemplate = viewModel::onSaveTemplate,
+                onLoadTemplate = { loadingTemplate = true }
             )
         }
 
@@ -173,8 +174,34 @@ private fun ScreenContent(state: NfcUiState, viewModel: NfcViewModel, onEnableNf
         Screen.SavedConfigs -> SavedConfigsScreen(
             configs = state.savedConfigs,
             onBack = viewModel::onBack,
+            onOpen = viewModel::onOpenTemplate,
             onDelete = viewModel::onDeleteTemplate
         )
+
+        Screen.TemplateDetails -> state.templateEditor?.let { editor ->
+            TemplateDetailsScreen(
+                editor = editor,
+                takenNames = viewModel.templateNames(editor.draft.kind) - editor.original.name,
+                onBack = viewModel::onBack,
+                onEdit = viewModel::onEditField,
+                onRename = viewModel::onRenameTemplate,
+                onSave = viewModel::onSaveTemplateChanges,
+                onReset = viewModel::onResetTemplate,
+                onDelete = viewModel::onDeleteOpenTemplate
+            )
+        }
+
+        Screen.SaveTemplate -> state.templateSave?.let { save ->
+            SaveTemplateScreen(
+                save = save,
+                templates = state.savedConfigs.filter { it.kind == save.kind },
+                onBack = viewModel::onBack,
+                onSaveNew = viewModel::onSaveAsNewTemplate,
+                onSelectTarget = viewModel::onSelectMergeTarget,
+                onChoiceChange = viewModel::onMergeChoiceChange,
+                onConfirmMerge = viewModel::onConfirmMerge
+            )
+        }
     }
 
     state.editing?.let { target ->
@@ -187,24 +214,19 @@ private fun ScreenContent(state: NfcUiState, viewModel: NfcViewModel, onEnableNf
         )
     }
 
-    val templateKind = if (state.screen == Screen.Overview) SavedConfigKind.GLOBAL else SavedConfigKind.SLOT
-    when (templateDialog) {
-        TemplateDialog.SAVE -> SaveTemplateDialog(
-            onDismiss = { templateDialog = null },
-            onSave = { viewModel.onSaveTemplate(it); templateDialog = null }
-        )
-        TemplateDialog.LOAD -> LoadTemplateDialog(
+    if (loadingTemplate) {
+        val templateKind = if (state.screen == Screen.Overview) SavedConfigKind.GLOBAL else SavedConfigKind.SLOT
+        LoadTemplateDialog(
             configs = state.savedConfigs.filter { it.kind == templateKind },
-            onDismiss = { templateDialog = null },
-            onLoad = { viewModel.onLoadTemplate(it); templateDialog = null }
+            onDismiss = { loadingTemplate = false },
+            onLoad = { viewModel.onLoadTemplate(it); loadingTemplate = false }
         )
-        null -> Unit
     }
 }
 
-private enum class TemplateDialog { SAVE, LOAD }
-
-private fun initialEditValue(state: NfcUiState, target: EditTarget): String = when (target) {
+private fun initialEditValue(state: NfcUiState, target: EditTarget): String = if (state.screen == Screen.TemplateDetails) {
+    state.templateEditor?.draft?.values?.get(target.key).orEmpty()
+} else when (target) {
     is EditTarget.Slot -> if (target.field == SlotField.SECRET) "" else state.slotEditor?.let { target.field.raw(it.draft) }.orEmpty()
     is EditTarget.Global -> state.globalEditor?.let { target.field.raw(it.draft) }.orEmpty()
 }

@@ -55,6 +55,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.otp_nfc_configurer.EditTarget
 import com.example.otp_nfc_configurer.R
+import com.example.otp_nfc_configurer.hint
+import com.example.otp_nfc_configurer.inputKind
+import com.example.otp_nfc_configurer.label
+import com.example.otp_nfc_configurer.limit
 import com.example.otp_nfc_configurer.model.InputKind
 import com.example.otp_nfc_configurer.model.limitedInput
 import com.example.otp_nfc_configurer.model.UiText
@@ -72,16 +76,11 @@ fun EditFieldSheet(
     onDismiss: () -> Unit,
     onSave: (String) -> Unit
 ) {
-    val (labelRes, hint, kind) = when (target) {
-        is EditTarget.Slot -> Triple(target.field.label, target.field.hint, target.field.kind)
-        is EditTarget.Global -> Triple(target.field.label, target.field.hint, InputKind.TEXT)
-    }
-    val limit: (String) -> String = when (target) {
-        is EditTarget.Slot -> target.field::limit
-        is EditTarget.Global -> target.field::limit
-    }
+    val hint = target.hint
+    val kind = target.inputKind
+    val limit: (String) -> String = target::limit
     val range = (target as? EditTarget.Slot)?.field?.range
-    val label = stringResource(labelRes)
+    val label = stringResource(target.label)
     var value by rememberSaveable(target) { mutableStateOf(initialValue) }
 
     ModalBottomSheet(

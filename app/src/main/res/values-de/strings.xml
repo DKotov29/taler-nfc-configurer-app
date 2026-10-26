@@ -155,6 +155,9 @@
     <string name="msg_debug_error">Debug: %1$s</string>
     <string name="msg_template_saved">„%1$s“ gespeichert</string>
     <string name="msg_template_loaded">„%1$s“ geladen</string>
+    <string name="msg_template_updated">„%1$s“ aktualisiert</string>
+    <string name="msg_template_unchanged">„%1$s“ enthält diese Werte bereits</string>
+    <string name="msg_template_fix_fields">Korrigieren Sie die markierten Felder, bevor Sie eine Vorlage speichern</string>
 
     <!-- Settings -->
     <string name="settings_title">Einstellungen</string>
@@ -187,6 +190,29 @@
     <string name="template_none_matching">Keine passenden Vorlagen gespeichert.</string>
     <string name="template_kind_slot">Slot-Konfiguration</string>
     <string name="template_kind_global">Gerätekonfiguration</string>
+    <string name="template_name_taken">Eine Vorlage mit diesem Namen existiert bereits</string>
+    <string name="template_rename">Vorlage umbenennen</string>
+    <string name="template_delete">Vorlage löschen</string>
+    <string name="template_save_changes">Änderungen speichern (%1$d)</string>
+    <string name="template_no_changes">Keine Änderungen zu speichern</string>
+    <string name="template_save_new">Neue Vorlage</string>
+    <string name="template_create">Erstellen</string>
+    <string name="template_save_existing">In bestehende speichern</string>
+    <string name="template_identical">Gleiche Werte</string>
+    <plurals name="template_differences">
+        <item quantity="one">%d abweichender Wert</item>
+        <item quantity="other">%d abweichende Werte</item>
+    </plurals>
+    <string name="template_merge_title">In „%1$s“ speichern</string>
+    <string name="template_merge_hint">Wählen Sie für jedes abweichende Feld, welcher Wert in der Vorlage bleibt.</string>
+    <string name="template_merge_current">Aktuell</string>
+    <string name="template_merge_stored">In der Vorlage</string>
+    <string name="template_merge_custom">Eigener Wert</string>
+    <plurals name="template_merge_identical">
+        <item quantity="one">%d weiteres Feld ist identisch.</item>
+        <item quantity="other">%d weitere Felder sind identisch.</item>
+    </plurals>
+    <string name="template_save_into">In „%1$s“ speichern</string>
 
     <!-- Debug console -->
     <string name="debug_command">Befehl</string>

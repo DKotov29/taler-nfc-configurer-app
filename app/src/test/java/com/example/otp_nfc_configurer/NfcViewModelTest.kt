@@ -22,7 +22,10 @@
 package com.example.otp_nfc_configurer
 
 import android.content.SharedPreferences
+import com.example.otp_nfc_configurer.data.SavedConfig
+import com.example.otp_nfc_configurer.data.SavedConfigKind
 import com.example.otp_nfc_configurer.data.SavedConfigRepository
+import com.example.otp_nfc_configurer.model.GlobalField
 import com.example.otp_nfc_configurer.data.ThemePreferences
 import com.example.otp_nfc_configurer.debug.DebugTapMode
 import com.example.otp_nfc_configurer.model.uiText
@@ -55,6 +58,7 @@ class NfcViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var reader: FakeTagReader
     private lateinit var viewModel: NfcViewModel
+    private lateinit var templates: SavedConfigRepository
 
     private val state get() = viewModel.uiState.value
 
@@ -62,8 +66,9 @@ class NfcViewModelTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         reader = FakeTagReader()
+        templates = SavedConfigRepository(FakePreferences())
         viewModel = NfcViewModel(
-            savedConfigRepository = SavedConfigRepository(FakePreferences()),
+            savedConfigRepository = templates,
             themePreferences = ThemePreferences(FakePreferences()),
             reader = reader
         )
@@ -194,6 +199,37 @@ class NfcViewModelTest {
         assertEquals(Screen.Discover, state.screen)
         assertEquals(R.string.msg_discover_failed, (state.message as? com.example.otp_nfc_configurer.model.UiText.Res)?.id)
         assertEquals(1, reader.runs.size) // Not repeated on the same tag
+    }
+
+    @Test
+    fun templateDetails_editsAndRenamesOnSave() = test {
+        val original = SavedConfig("Shop", SavedConfigKind.GLOBAL, mapOf(GlobalField.MERCHANT_BACKEND.name to "https://a"))
+        templates.save(original)
+        templates.save(SavedConfig("Other", SavedConfigKind.GLOBAL, emptyMap()))
+        advanceUntilIdle()
+        viewModel.onOpenSavedConfigs()
+        viewModel.onOpenTemplate(original)
+
+        val backend = EditTarget.Global(GlobalField.MERCHANT_BACKEND)
+        viewModel.onEditField(backend)
+        viewModel.onSaveEdit(" https://b ")
+        viewModel.onRenameTemplate("other") // Taken: ignored
+        viewModel.onRenameTemplate("Shop 2")
+        assertEquals(2, state.templateEditor?.changeCount)
+        assertEquals(original, templates.configs.value.first { it.name == "Shop" }) // Not saved yet
+
+        viewModel.onSaveTemplateChanges()
+        advanceUntilIdle()
+        assertEquals(
+            listOf("Other", "Shop 2"),
+            templates.configs.value.map { it.name }
+        )
+        assertEquals("https://b", templates.configs.value.last().values[GlobalField.MERCHANT_BACKEND.name])
+        assertEquals(0, state.templateEditor?.changeCount)
+
+        viewModel.onBack()
+        assertEquals(Screen.SavedConfigs, state.screen)
+        assertNull(state.templateEditor)
     }
 }
 

@@ -23,9 +23,11 @@ package com.example.otp_nfc_configurer
 
 import com.example.otp_nfc_configurer.data.AppTheme
 import com.example.otp_nfc_configurer.data.SavedConfig
+import com.example.otp_nfc_configurer.data.SavedConfigKind
 import com.example.otp_nfc_configurer.debug.DebugState
 import com.example.otp_nfc_configurer.debug.DebugTapMode
 import com.example.otp_nfc_configurer.model.DeviceInfo
+import com.example.otp_nfc_configurer.model.FieldInput
 import com.example.otp_nfc_configurer.model.GlobalConfig
 import com.example.otp_nfc_configurer.model.GlobalField
 import com.example.otp_nfc_configurer.model.SlotConfig
@@ -60,6 +62,10 @@ sealed interface Screen {
     data class DeviceMismatch(val expectedSerial: String, val detectedSerial: String, val retry: TapAction) : Screen
     data object Settings : Screen
     data object SavedConfigs : Screen
+    /** A template opened from [SavedConfigs], see [NfcUiState.templateEditor]. */
+    data object TemplateDetails : Screen
+    /** "Save Template" flow, see [NfcUiState.templateSave]. */
+    data object SaveTemplate : Screen
     data object Debug : Screen
 }
 
@@ -112,6 +118,59 @@ data class SetupDraft(
     val errors: Map<SlotField, UiText> = emptyMap()
 )
 
+/** Template opened from the settings; changes are kept in [draft] until saved. */
+data class TemplateEditor(val original: SavedConfig, val draft: SavedConfig) {
+    val changedKeys: Set<String>
+        get() = draft.kind.fields.map { it.key }.filter { original.values[it].orEmpty() != draft.values[it].orEmpty() }.toSet()
+
+    val renamed: Boolean get() = original.name != draft.name
+
+    val changeCount: Int get() = changedKeys.size + if (renamed) 1 else 0
+}
+
+enum class MergeSource { CURRENT, TEMPLATE, CUSTOM }
+
+/** Which value of a differing field ends up in the template; [custom] is the user's own input. */
+data class MergeChoice(
+    val source: MergeSource = MergeSource.CURRENT,
+    val custom: String = "",
+    val error: UiText? = null
+)
+
+/**
+ * "Save Template" flow: the [values] of the screen it was started from ([returnTo]) are saved as a new
+ * template, or merged into the existing [target] field by field.
+ */
+data class TemplateSave(
+    val kind: SavedConfigKind,
+    val values: Map<String, String>,
+    val returnTo: Screen,
+    val target: SavedConfig? = null,
+    val choices: Map<String, MergeChoice> = emptyMap()
+) {
+    /** Fields whose value differs between [values] and [target]. */
+    val differing: List<EditTarget>
+        get() = target?.let { t -> kind.fields.filter { values[it.key].orEmpty() != t.values[it.key].orEmpty() } }.orEmpty()
+
+    /** Values to store in [target] according to [choices], and the errors of invalid custom values by key. */
+    fun merge(): Pair<Map<String, String>, Map<String, UiText>> {
+        val merged = kind.fields.associate { it.key to values[it.key].orEmpty() }.toMutableMap()
+        val errors = mutableMapOf<String, UiText>()
+        for (field in differing) {
+            val choice = choices[field.key] ?: MergeChoice()
+            when (choice.source) {
+                MergeSource.CURRENT -> Unit
+                MergeSource.TEMPLATE -> merged[field.key] = target?.values?.get(field.key).orEmpty()
+                MergeSource.CUSTOM -> when (val result = field.normalize(choice.custom)) {
+                    is FieldInput.Valid -> merged[field.key] = result.value
+                    is FieldInput.Invalid -> errors[field.key] = result.reason
+                }
+            }
+        }
+        return merged to errors
+    }
+}
+
 sealed interface EditTarget {
     data class Slot(val field: SlotField) : EditTarget
     data class Global(val field: GlobalField) : EditTarget
@@ -129,6 +188,8 @@ data class NfcUiState(
     val editing: EditTarget? = null,
     val editError: UiText? = null,
     val savedConfigs: List<SavedConfig> = emptyList(),
+    val templateEditor: TemplateEditor? = null,
+    val templateSave: TemplateSave? = null,
     val debug: DebugState = DebugState(),
     val message: UiText? = null
 ) {
