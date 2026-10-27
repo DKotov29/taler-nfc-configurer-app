@@ -34,11 +34,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -203,7 +201,7 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp),
+            .heightIn(min = 52.dp),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -212,8 +210,14 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
-        Text(text, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+        ButtonLabel(text)
     }
+}
+
+/** Label of the full-size buttons; long translations wrap instead of being cut off in half-width buttons. */
+@Composable
+private fun ButtonLabel(text: String, color: Color = Color.Unspecified) {
+    Text(text, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = color, textAlign = TextAlign.Center)
 }
 
 @Composable
@@ -222,26 +226,51 @@ fun DarkButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier)
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp),
+            .heightIn(min = 52.dp),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onSurface,
             contentColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        Text(text, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+        ButtonLabel(text)
     }
 }
 
+/** Secondary action: grey border, no fill. [contentColor] is the error colour for destructive actions. */
 @Composable
-fun OutlineButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun OutlineButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface
+) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.height(52.dp),
+        enabled = enabled,
+        modifier = modifier.heightIn(min = 52.dp),
         shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = contentColor,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        )
     ) {
-        Text(text, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+        ButtonLabel(text)
+    }
+}
+
+/** Secondary and primary action side by side, equally high even when one label wraps. */
+@Composable
+fun ButtonPair(
+    modifier: Modifier = Modifier,
+    secondary: @Composable (Modifier) -> Unit,
+    primary: @Composable (Modifier) -> Unit
+) {
+    Row(modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        secondary(Modifier.weight(1f).fillMaxHeight())
+        primary(Modifier.weight(1f).fillMaxHeight())
     }
 }
 
@@ -277,23 +306,27 @@ fun ApplyChangesBar(
     applyLabel: String = stringResource(R.string.apply_changes_count, changeCount),
     noChangesLabel: String = stringResource(R.string.apply_no_changes)
 ) {
-    Column(
-        modifier = Modifier
+    // Reset stays in place while disabled, so the bar does not change height with the first edit.
+    ButtonPair(
+        Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PrimaryButton(
-            text = if (changeCount > 0) applyLabel else noChangesLabel,
-            onClick = onApply,
-            enabled = changeCount > 0
-        )
-        if (changeCount > 0) {
-            TextButton(onClick = onReset) {
-                Text(stringResource(R.string.reset_changes), color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold)
-            }
+        secondary = {
+            OutlineButton(
+                stringResource(R.string.reset_changes), onReset, it,
+                enabled = changeCount > 0,
+                contentColor = MaterialTheme.colorScheme.error
+            )
+        },
+        primary = {
+            PrimaryButton(
+                text = if (changeCount > 0) applyLabel else noChangesLabel,
+                onClick = onApply,
+                modifier = it,
+                enabled = changeCount > 0
+            )
         }
-    }
+    )
 }
 
 @Composable

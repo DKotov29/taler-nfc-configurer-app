@@ -134,7 +134,8 @@ fun DebugScreen(
                         fontSize = 12.sp,
                         color = TextSecondary
                     )
-                    TextButton(onClick = onDisarm) { Text(stringResource(R.string.action_cancel), color = TextSecondary) }
+                    Spacer(Modifier.height(12.dp))
+                    OutlineButton(stringResource(R.string.action_cancel), onDisarm, Modifier.fillMaxWidth())
                 }
             } else {
                 PrimaryButton(

@@ -21,7 +21,6 @@
 
 package com.example.otp_nfc_configurer.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,7 +44,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -62,7 +60,6 @@ import com.example.otp_nfc_configurer.limit
 import com.example.otp_nfc_configurer.model.InputKind
 import com.example.otp_nfc_configurer.model.limitedInput
 import com.example.otp_nfc_configurer.model.UiText
-import com.example.otp_nfc_configurer.ui.theme.Border
 import com.example.otp_nfc_configurer.ui.theme.TextPrimary
 import com.example.otp_nfc_configurer.ui.theme.TextSecondary
 
@@ -143,10 +140,10 @@ fun EditFieldSheet(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(24.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlineButton(stringResource(R.string.action_cancel), onDismiss, Modifier.weight(1f))
-                DarkButton(stringResource(R.string.action_save), { onSave(value) }, Modifier.weight(1f))
-            }
+            ButtonPair(
+                secondary = { OutlineButton(stringResource(R.string.action_cancel), onDismiss, it) },
+                primary = { DarkButton(stringResource(R.string.action_save), { onSave(value) }, it) }
+            )
         }
     }
 }

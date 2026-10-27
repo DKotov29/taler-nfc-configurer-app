@@ -125,9 +125,10 @@ fun TemplateDetailsScreen(
                     )
                 }
             }
-            TextButton(onClick = { deleting = true }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text(stringResource(R.string.template_delete), color = ErrorRed, fontWeight = FontWeight.SemiBold)
-            }
+            OutlineButton(
+                stringResource(R.string.template_delete), { deleting = true }, Modifier.fillMaxWidth(),
+                contentColor = MaterialTheme.colorScheme.error
+            )
         }
         ApplyChangesBar(
             changeCount = editor.changeCount,

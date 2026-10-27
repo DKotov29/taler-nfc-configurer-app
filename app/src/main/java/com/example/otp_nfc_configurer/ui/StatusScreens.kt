@@ -37,7 +37,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -129,9 +128,7 @@ fun TapPromptScreen(
             if (nfcStatus == NfcStatus.AVAILABLE) WaitingIndicator(isCommunicating)
             Spacer(Modifier.height(24.dp))
             if (!isCommunicating) {
-                TextButton(onClick = onCancel) {
-                    Text(stringResource(R.string.action_cancel), color = TextSecondary, fontWeight = FontWeight.SemiBold)
-                }
+                OutlineButton(stringResource(R.string.action_cancel), onCancel, Modifier.fillMaxWidth().padding(horizontal = 16.dp))
             }
         }
     }
@@ -214,16 +211,11 @@ private fun ExclamationMark() {
 
 @Composable
 private fun BottomActions(secondary: String, onSecondary: () -> Unit, primary: String, onPrimary: () -> Unit) {
-    Column(
+    ButtonPair(
         Modifier.fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TextButton(onClick = onSecondary) {
-            Text(secondary, color = TextSecondary, fontWeight = FontWeight.SemiBold)
-        }
-        Spacer(Modifier.height(8.dp))
-        DarkButton(primary, onPrimary)
-    }
+        secondary = { OutlineButton(secondary, onSecondary, it) },
+        primary = { DarkButton(primary, onPrimary, it) }
+    )
 }
 
 @Composable
