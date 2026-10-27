@@ -74,7 +74,7 @@ fun DiscoverScreen(
             CenteredMessage(
                 heading = stringResource(R.string.discover_heading),
                 description = stringResource(R.string.discover_desc)
-            ) { PulseIcon(animate = nfcStatus == NfcStatus.AVAILABLE) }
+            ) { NfcTapAnimation(active = nfcStatus == NfcStatus.AVAILABLE, communicating = isCommunicating) }
         }
         Box(Modifier.fillMaxWidth().padding(bottom = 96.dp), contentAlignment = Alignment.Center) {
             if (nfcStatus == NfcStatus.AVAILABLE) WaitingIndicator(isCommunicating)
@@ -119,7 +119,7 @@ fun TapPromptScreen(
         NfcStatusBanner(nfcStatus, onEnableNfc)
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             CenteredMessage(heading = heading, description = description) {
-                PulseIcon(animate = nfcStatus == NfcStatus.AVAILABLE)
+                NfcTapAnimation(active = nfcStatus == NfcStatus.AVAILABLE, communicating = isCommunicating)
             }
         }
         Column(
@@ -150,7 +150,7 @@ fun FailureScreen(
         AppTopBar(title = titleText)
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             CenteredMessage(heading = titleText, description = message.asString()) {
-                PulseIcon(color = ErrorRed, container = ErrorContainer, animate = false) { ExclamationMark() }
+                StatusIcon(color = ErrorRed, container = ErrorContainer) { ExclamationMark() }
             }
         }
         BottomActions(
@@ -179,7 +179,7 @@ fun DeviceMismatchScreen(
                 heading = stringResource(R.string.mismatch_heading),
                 description = stringResource(R.string.mismatch_desc)
             ) {
-                PulseIcon(color = WarningOrange, container = WarningContainer, animate = false) { ExclamationMark() }
+                StatusIcon(color = WarningOrange, container = WarningContainer) { ExclamationMark() }
             }
             Spacer(Modifier.height(24.dp))
             Column(

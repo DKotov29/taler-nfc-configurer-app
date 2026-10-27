@@ -210,7 +210,7 @@ private fun TapToLoadCard(heading: String, description: String) {
             Modifier.fillMaxWidth().padding(vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PulseIcon()
+            NfcTapAnimation(active = true, communicating = false)
             Spacer(Modifier.height(8.dp))
             Text(heading, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextPrimary, textAlign = TextAlign.Center)
             Spacer(Modifier.height(4.dp))

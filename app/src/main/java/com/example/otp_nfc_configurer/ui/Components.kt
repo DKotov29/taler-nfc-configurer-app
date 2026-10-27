@@ -21,11 +21,6 @@
 
 package com.example.otp_nfc_configurer.ui
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -302,29 +297,15 @@ fun ApplyChangesBar(
 }
 
 @Composable
-fun PulseIcon(
-    color: Color = MaterialTheme.colorScheme.primary,
-    container: Color = MaterialTheme.colorScheme.primaryContainer,
-    animate: Boolean = true,
-    content: @Composable () -> Unit = {
-        Box(
-            Modifier
-                .size(26.dp)
-                .border(3.dp, Color.White, CircleShape)
-        )
-    }
+fun StatusIcon(
+    color: Color,
+    container: Color,
+    content: @Composable () -> Unit
 ) {
-    val scale by rememberInfiniteTransition(label = "pulse").animateFloat(
-        initialValue = 0.9f,
-        targetValue = if (animate) 1.05f else 0.9f,
-        animationSpec = infiniteRepeatable(tween(1200), RepeatMode.Reverse),
-        label = "pulseScale"
-    )
     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(140.dp)) {
         Box(
             Modifier
-                .size(140.dp)
-                .scale(scale)
+                .size(126.dp)
                 .background(container.copy(alpha = 0.6f), CircleShape)
         )
         Box(
