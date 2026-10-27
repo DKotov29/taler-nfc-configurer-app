@@ -34,6 +34,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -88,7 +90,6 @@ fun SettingsScreen(
     FullScreen {
         AppTopBar(title = stringResource(R.string.settings_title), onBack = onBack)
         SettingsEntry(stringResource(R.string.settings_saved_configs), onSavedConfigs)
-        SettingsEntry(stringResource(R.string.settings_debug), onDebug)
         SettingsEntry(
             title = stringResource(R.string.settings_theme, stringResource(currentTheme.title)),
             onClick = { showThemeDialog = true }
@@ -97,7 +98,14 @@ fun SettingsScreen(
             title = stringResource(R.string.settings_language, languageName(currentLanguage)),
             onClick = { showLanguageDialog = true }
         )
-        SettingsEntry(stringResource(R.string.settings_about), onClick = { showAboutDialog = true })
+        // Debug is hidden behind About: swipe About to the side to reveal it.
+        HorizontalPager(rememberPagerState { 2 }) { page ->
+            if (page == 0) {
+                SettingsEntry(stringResource(R.string.settings_about), onClick = { showAboutDialog = true })
+            } else {
+                SettingsEntry(stringResource(R.string.settings_debug), onDebug)
+            }
+        }
     }
     if (showAboutDialog) {
         AboutDialog(onDismiss = { showAboutDialog = false })
