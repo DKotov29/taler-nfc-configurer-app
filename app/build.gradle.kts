@@ -25,7 +25,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.otp_nfc_configurer"
+    namespace = "net.taler.xotpconfigurer"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -33,11 +33,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.otp_nfc_configurer"
+        applicationId = "net.taler.xotpconfigurer"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,6 +57,11 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    // The dependency list is encrypted with a Google key; F-Droid rejects such blobs in the APK.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
 }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">OTP-NFC-Configurer</string>
+    <string name="app_name" translatable="false">Taler xOTP Configurer</string>
 
     <!-- Common actions -->
     <string name="action_back">Back</string>

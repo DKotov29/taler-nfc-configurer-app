@@ -1,4 +1,4 @@
-# OTP-NFC-Configurer
+# Taler xOTP Configurer
 
 Android app for configuring xOTP devices over NFC.
 
