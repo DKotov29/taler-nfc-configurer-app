@@ -9,8 +9,8 @@ License: GPL-3.0-or-later
 AuthorName: Taler Systems S.A.
 WebSite: https://taler.net/
 # TODO: should be application's page
-SourceCode: https://git.taler.net
-IssueTracker: https://TODO
+SourceCode: https://github.com/DKotov29/taler-nfc-configurer-app
+# IssueTracker: https://
 
 AutoName: Taler xOTP Configurer
 
