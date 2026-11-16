@@ -1,0 +1,1 @@
+GNU Taler xOTP-Geräte per NFC mit dem Handy einrichten

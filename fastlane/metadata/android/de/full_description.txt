@@ -1,0 +1,13 @@
+Taler xOTP Configurer richtet xOTP-Geräte ein: kleine Offline-Geräte für GNU-Taler-Händler, die Einmalcodes zur Bestätigung von Zahlungen anzeigen. Schalten Sie das Gerät in den Konfigurationsmodus, halten Sie Ihr Handy daran und konfigurieren Sie es per NFC.
+
+Funktionen:
+• Geräteinformationen und Liste der Slots auslesen
+• Slot bearbeiten: Name, Algorithmus, Codelänge, Intervall, Währung, Bruchteil und Händlervorlage
+• Leere Slots einrichten, inklusive geheimem Schlüssel. Der Schlüssel kann nur geschrieben werden: Er wird nie vom Gerät zurückgelesen
+• Globale Einstellungen ändern: Händler-Backend und Gerätebeschreibung
+• Aktiven Slot wählen
+• Konfigurationen als Vorlagen speichern und auf andere Slots oder Geräte anwenden; beim Speichern in eine bestehende Vorlage pro Feld wählen, welcher Wert bleibt
+• Jeder Schreibvorgang erfordert eine ausdrückliche NFC-Berührung und wird mit der Seriennummer des zuvor gelesenen Geräts abgeglichen
+• Helles und dunkles Design; Englisch, Deutsch, Schweizerdeutsch und Ukrainisch
+
+Benötigt ein Handy mit NFC.

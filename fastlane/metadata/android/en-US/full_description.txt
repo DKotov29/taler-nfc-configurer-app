@@ -1,0 +1,13 @@
+Taler xOTP Configurer sets up xOTP devices: small offline devices for GNU Taler merchants that show one-time codes to confirm payments. Switch the device to configuration mode, tap it with your phone, and configure it over NFC.
+
+Features:
+• Read device information and the list of slots
+• Edit a slot: name, algorithm, code length, interval, currency, fraction and merchant template
+• Set up empty slots, including the secret key. The secret is write-only: it is never read back from the device
+• Change the global settings: merchant backend and device description
+• Choose which slot is active
+• Save configurations as templates and apply them to other slots or devices; when saving into an existing template, pick per field which value to keep
+• Every write needs an explicit NFC tap and is checked against the serial number of the device you read before
+• Light and dark theme; English, German, Swiss German and Ukrainian
+
+Requires a phone with NFC.

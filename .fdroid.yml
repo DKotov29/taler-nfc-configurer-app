@@ -1,0 +1,31 @@
+# F-Droid build recipe. Used as is by `fdroid build` inside this repository; for the
+# submission it becomes metadata/net.taler.xotpconfigurer.yml in fdroiddata.
+# Name, descriptions, icon and screenshots come from fastlane/metadata/android.
+
+Categories:
+  - Connectivity
+  - Money
+License: GPL-3.0-or-later
+AuthorName: Taler Systems S.A.
+WebSite: https://taler.net/
+# TODO: should be application's page
+SourceCode: https://git.taler.net
+IssueTracker: https://TODO
+
+AutoName: Taler xOTP Configurer
+
+RepoType: git
+Repo: https://github.com/DKotov29/taler-nfc-configurer-app
+
+Builds:
+  - versionName: 0.1.1
+    versionCode: 1
+    commit: v0.1.1
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.1.1
+CurrentVersionCode: 1

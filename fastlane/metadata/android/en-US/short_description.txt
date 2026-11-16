@@ -1,0 +1,1 @@
+Set up GNU Taler xOTP devices by tapping them with your phone
